@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSearch } from '../context/SearchContext.jsx';
 
-export default function Header({ onSearch }){
-    const [searchTerm, setSearchTerm] = useState('');
+export default function Header(){
+    const { searchTerm, setSearchTerm } = useSearch();
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
-        onSearch(event.target.value);
     };
 
     return (

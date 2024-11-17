@@ -5,17 +5,23 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import HomePage from './pages/HomePage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
+import App from './App.jsx';
+import { SearchProvider } from './context/SearchContext.jsx';
 // import Authentication, {AuthenticationMode} from './screens/Authentication.jsx';
 // import ProtectedRoute from './components/ProtectedRoute.jsx';
 // import UserProvider from './context/UserProvider.jsx';
 
 const router = createBrowserRouter([
   {
-    errorElement: <ErrorPage></ErrorPage>
-  },
-  {
     path: '/',
-    element: <HomePage></HomePage>
+    element: <App></App>,
+    errorElement: <ErrorPage></ErrorPage>,
+    children: [
+      {
+        path: '/',
+        element: <HomePage />
+      },
+    ],
   }
   // {
   //   path: '/signin',
@@ -38,8 +44,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {/* <UserProvider> */}
+    <SearchProvider>
       <RouterProvider router={router}></RouterProvider>
-    {/* </UserProvider> */}
+    </SearchProvider>
   </StrictMode>
 );

@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import MovieCard from './MovieCard.jsx';
 import xml2js from 'xml2js';
 
-export default function MovieList({ searchTerm }){
+import MovieCard from './MovieCard.jsx';
+import { useSearch } from '../context/SearchContext.jsx';
+
+export default function MovieList(){
+    
     const [movies, setMovies] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
+
+    const { searchTerm } = useSearch();
+
+    const filteredMovies = movies?.filter((movie) =>
+        movie.title && movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.theater && movie.theater.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.lengthInMinutes && movie.lengthInMinutes.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -17,7 +28,7 @@ export default function MovieList({ searchTerm }){
 
                 const result = await parser.parseStringPromise(response.data);
 
-                const shows = result.Schedule.Shows.Show;
+                let shows = result.Schedule.Shows.Show;
 
                 if (!Array.isArray(shows)) {
                     shows = [shows];
@@ -42,16 +53,12 @@ export default function MovieList({ searchTerm }){
         fetchMovies();
     }, []);
 
-    const filteredMovies = movies?.filter((movie) =>
-        movie.Title && movie.Title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     if (isLoading) return (<div>Loading ...</div>);
     if (isError) return (<div>Error</div>);
 
     return (
         <div className='movie-list'>
-            {movies?.map((movie, index) => (
+            {filteredMovies?.map((movie, index) => (
                 <MovieCard key={index} movie={movie} />
             ))}
         </div>
