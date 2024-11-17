@@ -1,12 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
 import './index.css';
-import HomePage from './pages/HomePage.jsx';
-import ErrorPage from './pages/ErrorPage.jsx';
+
 import App from './App.jsx';
 import { SearchProvider } from './context/SearchContext.jsx';
+import { GroupProvider } from './context/GroupContext';
+import HomePage from './pages/HomePage.jsx';
+import ErrorPage from './pages/ErrorPage.jsx';
+import GroupList from './components/GroupList';
+import GroupPage from './pages/GroupPage';
 // import Authentication, {AuthenticationMode} from './screens/Authentication.jsx';
 // import ProtectedRoute from './components/ProtectedRoute.jsx';
 // import UserProvider from './context/UserProvider.jsx';
@@ -20,6 +23,16 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />
+      },
+      {
+        path: '/groups',
+        element: <GroupList />,
+        children: [
+          {
+            path: 'groups/:id',
+            element: <GroupPage />
+          },
+        ],
       },
     ],
   }
@@ -45,7 +58,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <SearchProvider>
-      <RouterProvider router={router}></RouterProvider>
+      <GroupProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </GroupProvider>
     </SearchProvider>
   </StrictMode>
 );
