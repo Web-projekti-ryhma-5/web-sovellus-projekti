@@ -10,6 +10,8 @@ import HomePage from './pages/HomePage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import GroupList from './components/GroupList';
 import GroupPage from './pages/GroupPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 // import Authentication, {AuthenticationMode} from './screens/Authentication.jsx';
 // import ProtectedRoute from './components/ProtectedRoute.jsx';
 // import UserProvider from './context/UserProvider.jsx';
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />
+      },
+      {
+        path: '/register',
+        element: <RegisterPage />
+      },
+      {
+        path: '/login',
+        element: <LoginPage />
       },
       {
         path: '/groups',
