@@ -13,6 +13,49 @@
     text-align: center;
 }
 
+.schedule-dates-navigation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    max-width: 100%;
+}
+
+.schedule-dates-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.schedule-date {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+
+.schedule-date.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.nav-button {
+    padding: 5px 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    max-width: 100px;
+}
+
+.nav-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+
 @media (max-width: 1024px) {
     .movie-list {
         grid-template-columns: repeat(2, 1fr);
