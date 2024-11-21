@@ -41,6 +41,7 @@ export default function MovieList({ selectedDate }) {
 
                 const parsedMovies = uniqueShows.map((show) => ({
                     title: show.Title,
+                    eventID: show.EventID,
                     theater: show.Theatre,
                     showStart: new Date(show.dttmShowStart).toLocaleString('fi-FI', { timeZone: 'UTC' }),
                     lengthInMinutes: show.LengthInMinutes,

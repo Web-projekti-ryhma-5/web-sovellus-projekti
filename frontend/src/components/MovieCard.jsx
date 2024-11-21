@@ -1,9 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function MovieCard({ movie }){
+export default function MovieCard({ movie }) {
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        navigate(`/movie?title=${encodeURIComponent(movie.title)}&eventID=${movie.eventID}`);
+    };
 
     return (
-        <div className="movie-card">
+        <div 
+            className="movie-card"
+            onClick={handleCardClick}
+            style={{ cursor: 'pointer' }}
+        >
             <img 
                 src={movie.imageUrl} 
                 alt={`Poster for ${movie.title}`} 
@@ -14,5 +24,5 @@ export default function MovieCard({ movie }){
             <p>Show Start: {movie.showStart}</p>
             <p>Length: {movie.lengthInMinutes} minutes</p>
         </div>
-    )
+    );
 }
