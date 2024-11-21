@@ -24,7 +24,7 @@
 .schedule-dates-row {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     gap: 10px;
 }
 
@@ -47,7 +47,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    max-width: 100px;
+    width: 100px;
 }
 
 .nav-button:disabled {
@@ -55,6 +55,11 @@
     cursor: not-allowed;
 }
 
+@media (max-width: 1024px) {
+    .schedule-dates-row {
+        flex-wrap: wrap;
+    }
+}
 
 @media (max-width: 1024px) {
     .movie-list {
