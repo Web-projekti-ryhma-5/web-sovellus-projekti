@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS movies (
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS revoked_tokens (
+    id SERIAL PRIMARY KEY,
+    token TEXT NOT NULL UNIQUE,
+    blacklisted_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO account (email, user_password) VALUES ('user1@example.com', 'password123');
 INSERT INTO account (email, user_password) VALUES ('user2@example.com', 'password456');
 

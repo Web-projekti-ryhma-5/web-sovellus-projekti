@@ -1,4 +1,5 @@
 import { ApiError } from "../util/ApiError.js";
+import {pool} from "../db.js";
 import { postUser, getByEmail, deleteUser } from '../models/userModel.js';
 import {hash, compare} from 'bcrypt';
 import pkg from 'jsonwebtoken';
@@ -35,6 +36,15 @@ const registerUser = async (req, res, next) => {
     }
 }
 
+const logout = async (req, res, next) => {
+    try {
+        await pool.query('INSERT INTO token_blacklist (token) VALUES ($1)', [token]);
+        return res.status(200).json({ message: 'Successfully logged out' });
+    } catch (err) {
+        return next(err);
+    }
+}
+
 const createUserObject = (id, email, token=undefined) => {
     return {
         id: id,
@@ -43,4 +53,4 @@ const createUserObject = (id, email, token=undefined) => {
     }
 }
 
-export {loginUser, registerUser};
+export {loginUser, registerUser, logout};
