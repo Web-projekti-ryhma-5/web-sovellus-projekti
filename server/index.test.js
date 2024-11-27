@@ -1,25 +1,12 @@
 import { expect } from "chai";
-import {pool} from './db.js';
-import {hash, compare} from 'bcrypt';
-import jwt from 'jsonwebtoken';
-const {sign} = jwt;
-
-const insertTestUser = (email, password) => {
-    hash(password, 10, (err, hash) => {
-        pool.query('insert into account (email, user_password) values ($1, $2) returning *', [email, hash]);
-    });
-}
-
-const getToken = (email) => {
-    return sign({user: email}, process.env.JWT_SECRET_KEY);
-}
 
 const url = 'http://localhost:3001/api/';
 
-describe('POST register', () => {
+describe('AUTH', () => {
 
     const email = 'register1@gmail.com';
     const password = 'register123';
+    let token;
 
     it('should register with valid email and password', async () =>{
         const response = await fetch(url + 'auth/register', {
@@ -29,14 +16,29 @@ describe('POST register', () => {
             },
             body: JSON.stringify({'email':email,'password':password})
         });
+
         const data = await response.json();
 
-        expect(response.status).to.equal(201, data.error);
-        expect(data).to.be.an('object');
-        expect(data).to.include.all.keys('id', 'email');
+        expect(response.status).to.equal(201);
+        expect(data.message).to.equal('Registration success');
     });
 
-    it('should not post a user with a password shorter than 8 characters', async() => {
+    it('should not allow duplicate registration', async () => {
+        const response = await fetch(url + 'auth/register', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'email':email,'password':password})
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(409);
+        expect(data.message).to.equal('Email already exists');
+    });
+
+    it('should not register a user with a password shorter than 8 characters', async() => {
         const email = 'register2@mail.com';
         const password = 'short1';
 
@@ -47,20 +49,12 @@ describe('POST register', () => {
             },
             body: JSON.stringify({ email: email, password: password })
         });
+
         const data = await response.json();
 
-        expect(response.status).to.be.equal(400, data.error);
-        expect(data).to.be.an('object');
-        expect(data).to.include.all.keys('error');
+        expect(response.status).to.equal(400);
+        expect(data.message).to.equal('Invalid password for user');
     });
-});
-
-describe('POST login', () => {
-
-    const email = 'user3@example.com';
-    const password = 'password123';
-
-    insertTestUser(email, password);
 
     it('should login with valid email and password', async () =>{
         const response = await fetch(url + 'auth/login', {
@@ -70,20 +64,28 @@ describe('POST login', () => {
             },
             body: JSON.stringify({'email':email,'password':password})
         });
+
         const data = await response.json();
 
-        expect(response.status).to.equal(200, data.error);
-        expect(data).to.be.an('object');
-        expect(data).to.include.all.keys('id', 'email', 'token');
+        expect(response.status).to.equal(200);
+        expect(data).to.have.property('token');
+        token = data.token;
     });
-});
 
-describe('POST logout', () => {
+    it('should fail login with invalid credentials', async () => {
+        const response = await fetch(url + 'auth/login', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'email':email,'password':'123'})
+        });
 
-    const email = 'user4@example.com';
-    const password = 'password123';
-    insertTestUser(email, password);
-    const token = getToken(email);
+        const data = await response.json();
+
+        expect(response.status).to.equal(401);
+        expect(data.message).to.equal('Invalid credentials');
+    });
 
     it('should logout user', async () =>{
         const response = await fetch(url + 'auth/logout', {
@@ -93,10 +95,25 @@ describe('POST logout', () => {
                 'Authorization': token
             }
         });
+
         const data = await response.json();
 
-        expect(response.status).to.equal(200, data.error);
-        expect(data).to.be.an('object');
-        expect(data).to.include.all.keys('message');
+        expect(response.status).to.equal(200);
+        expect(data.message).to.equal('Successfully logged out');
+    });
+
+    it('should not allow usage of a revoked token', async () => {
+        const response = await fetch(url + 'auth/logout', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(401);
+        expect(data.message).to.equal('Token has been revoked');
     });
 });
