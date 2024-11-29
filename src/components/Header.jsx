@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSearch } from '../context/SearchContext.jsx';
+import LogoutButton from './LogoutButton.jsx';
 
 export default function Header(){
     const { searchTerm, setSearchTerm } = useSearch();
@@ -30,6 +31,7 @@ export default function Header(){
                     style={{ padding: '0.5rem', width: '200px' }}
                 />
             </div>
+            <LogoutButton/>
         </header>
     );
 }

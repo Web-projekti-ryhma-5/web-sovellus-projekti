@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 
 import App from './App.jsx';
+import { AuthProvider } from './context/AuthContext';
 import { SearchProvider } from './context/SearchContext.jsx';
 import { GroupProvider } from './context/GroupContext';
 import HomePage from './pages/HomePage.jsx';
@@ -48,31 +49,16 @@ const router = createBrowserRouter([
       },
     ],
   }
-  // {
-  //   path: '/signin',
-  //   element: <Authentication authenticationMode={AuthenticationMode.Login}></Authentication>
-  // },
-  // {
-  //   path: '/signup',
-  //   element: <Authentication authenticationMode={AuthenticationMode.Register}></Authentication>
-  // },
-  // {
-  //   element: <ProtectedRoute></ProtectedRoute>,
-  //   children: [
-  //     {
-  //       path: '/',
-  //       element: <Home></Home>
-  //     }
-  //   ]
-  // }
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <SearchProvider>
-      <GroupProvider>
-        <RouterProvider router={router}></RouterProvider>
-      </GroupProvider>
-    </SearchProvider>
+    <AuthProvider>
+      <SearchProvider>
+        <GroupProvider>
+          <RouterProvider router={router}></RouterProvider>
+        </GroupProvider>
+      </SearchProvider>
+    </AuthProvider>
   </StrictMode>
 );
