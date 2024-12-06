@@ -126,6 +126,8 @@ describe('REVIEWS', () => {
     const movieId = 1;
     const rating = "4";
     const info = "Great movie, highly recommend!";
+    const newRating = "5";
+    const newInfo = "Great movie, highly recommend!";
 
     before(async () => {
         await fetch(url + 'auth/register', {
@@ -209,5 +211,53 @@ describe('REVIEWS', () => {
 
         expect(response.status).to.equal(401);
         expect(data.message).to.equal('Authorization required.');
+    });
+
+    it('should update the review for the movie', async () => {
+        const response = await fetch(url + `reviews/${movieId}`, {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ rating: newRating, info: newInfo })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.message).to.equal('Review updated successfully');
+        expect(data.review.rating).to.equal(newRating);
+        expect(data.review.info).to.equal(newInfo);
+    });
+
+    it('should delete the review for the movie', async () => {
+        const response = await fetch(url + `reviews/${movieId}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.message).to.equal('Review deleted successfully');
+    });
+
+    it('should not find a deleted review', async () => {
+        const response = await fetch(url + `reviews/${movieId}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(404);
+        expect(data.message).to.equal('Review not found');
     });
 });
