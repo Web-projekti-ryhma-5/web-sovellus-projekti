@@ -117,3 +117,97 @@ describe('AUTH', () => {
         expect(data.message).to.equal('Token has been revoked');
     });
 });
+
+describe('REVIEWS', () => {
+    const email = 'testuser@gmail.com';
+    const password = 'testpassword1';
+    let token;
+    const userId = 4;
+    const movieId = 1;
+    const rating = "4";
+    const info = "Great movie, highly recommend!";
+
+    before(async () => {
+        await fetch(url + 'auth/register', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, password: password })
+        });
+
+        const loginResponse = await fetch(url + 'auth/login', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, password: password })
+        });
+
+        const loginData = await loginResponse.json();
+        token = loginData.token;
+    });
+
+    it('should add a review for a movie', async () => {
+        const response = await fetch(url + 'reviews/new', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ movieId, rating, info })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(201);
+        expect(data.message).to.equal('Review added successfully');
+        expect(data.review).to.have.property('user_id', userId);
+        expect(data.review).to.have.property('movie_id', movieId);
+        expect(data.review).to.have.property('rating', rating);
+        expect(data.review).to.have.property('info', info);
+    });
+
+    it('should not allow adding a review with missing rating', async () => {
+        const response = await fetch(url + 'reviews/new', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ movieId })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(400);
+        expect(data.message).to.equal('Movie ID and rating are required');
+    });
+
+    it('should not allow adding a review with invalid rating', async () => {
+        const invalidRating = "6";
+
+        const response = await fetch(url + 'reviews/new', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ movieId, rating: invalidRating, info })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(400);
+        expect(data.message).to.equal('Rating must be a string value between 1 and 5');
+    });
+
+    it('should not allow adding a review without a token', async () => {
+        const response = await fetch(url + 'reviews/new', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ movieId, rating, info })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(401);
+        expect(data.message).to.equal('Authorization required.');
+    });
+});
