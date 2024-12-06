@@ -18,7 +18,7 @@ const loginUser = async (req, res, next) => {
         const match = await compare(req.body.password, result.rows[0].user_password);
         if (!match) return next(new ApiError(invalid_message, 401));
 
-        const token = sign({user: req.body.email}, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+        const token = sign({email: result.rows[0].email, id: result.rows[0].id}, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
         return res.status(200).json({token});
     } catch (err) {
         return next(err);

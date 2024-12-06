@@ -17,7 +17,9 @@ const auth = async (req, res, next) => {
         if (result.rows.length > 0) {
             return res.status(401).json({ message: 'Token has been revoked' });
         }
-        verify(token, process.env.JWT_SECRET_KEY);
+        const decoded = verify(token, process.env.JWT_SECRET_KEY);
+        const user = { email: decoded.email, id: decoded.id };
+        req.user = user;
         next();
     } catch (err) {
         return res.status(403).json({ message: invalid_msg });
