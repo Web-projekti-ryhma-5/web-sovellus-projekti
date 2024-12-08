@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS account (
 CREATE TABLE IF NOT EXISTS movies (
     id SERIAL PRIMARY KEY,
     movie_name VARCHAR(255) NOT NULL,
-    category VARCHAR(255) NOT NULL,
-    movie_language VARCHAR(255) NOT NULL,
-    actor VARCHAR(255) NOT NULL,
-    info TEXT,
+    category VARCHAR(255) DEFAULT '',
+    movie_language VARCHAR(255) DEFAULT '',
+    actor VARCHAR(255) DEFAULT '',
+    info TEXT DEFAULT '',
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -29,9 +29,10 @@ CREATE TABLE IF NOT EXISTS groups (
 
 CREATE TABLE IF NOT EXISTS reviews (
     user_id INT NOT NULL,
+    email VARCHAR(255) NOT NULL,
     movie_id INT NOT NULL,
     rating VARCHAR(255) NOT NULL,
-    info TEXT,
+    info TEXT DEFAULT '',
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user FOREIGN KEY (user_id)
