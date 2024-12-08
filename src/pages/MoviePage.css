@@ -1,5 +1,58 @@
 .movie-page {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.movie-details {
+    text-align: center;
+}
+
+.movie-poster {
+    max-width: 300px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.schedule-details, .reviews-section {
+    width: 80%;
+    margin: 20px 0;
+}
+
+.schedule-item, .review-item {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.review-form {
+    margin-top: 20px;
+}
+
+.review-form textarea {
+    width: 100%;
+    height: 100px;
+}
+
+.review-form .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.review-form .delete-button:hover {
+    background-color: darkred;
+}
+
+
+/* .movie-page {
+    display: flex;
     gap: 20px;
     margin: 20px;
 }
@@ -27,4 +80,4 @@
 
 .schedule-item p {
     margin: 5px 0;
-}
+} */
