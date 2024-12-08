@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -6,6 +6,25 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
+
+    // refresh user and token between page reloads
+    useEffect(() => {
+        const storedToken = localStorage.getItem('authToken');
+        if (storedToken) {
+            try {
+                const decodedToken = JSON.parse(atob(storedToken.split('.')[1]));
+                const isExpired = decodedToken.exp * 1000 < Date.now();
+                if (isExpired) {
+                    localStorage.removeItem('authToken');
+                } else {
+                    setToken(storedToken);
+                    setUser({ email: decodedToken.email });
+                }
+            } catch (error) {
+                localStorage.removeItem('authToken');
+            }
+        }
+    }, []);
 
     const login = async (email, password) => {
         try {
@@ -19,9 +38,7 @@ export const AuthProvider = ({ children }) => {
             setUser({ email });
             localStorage.setItem('authToken', token);
 
-            console.log('Login successful');
         } catch (error) {
-            console.error('Login failed:', error.response?.data?.message || error.message);
             throw error;
         }
     };
@@ -32,9 +49,7 @@ export const AuthProvider = ({ children }) => {
                 email,
                 password,
             });
-            console.log('Registration successful');
         } catch (error) {
-            console.error('Registration failed:', error.response?.data?.message || error.message);
             throw error;
         }
     };
@@ -50,9 +65,7 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             localStorage.removeItem('authToken');
 
-            console.log('Logout successful');
         } catch (error) {
-            console.error('Logout failed:', error.response?.data?.message || error.message);
             throw error;
         }
     };
