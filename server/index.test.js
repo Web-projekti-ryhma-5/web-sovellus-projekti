@@ -122,6 +122,11 @@ describe('REVIEWS', () => {
     const email = 'testuser@gmail.com';
     const password = 'testpassword1';
     let token;
+
+    const notFoundTitle = 'abc';
+    const emptyReviews = [];
+    const title = 'Movie 1';
+
     const userId = 4;
     const movieId = 1;
     const rating = "4";
@@ -153,7 +158,7 @@ describe('REVIEWS', () => {
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ movieId, rating, info })
+            body: JSON.stringify({ title, rating, info })
         });
 
         const data = await response.json();
@@ -161,6 +166,7 @@ describe('REVIEWS', () => {
         expect(response.status).to.equal(201);
         expect(data.message).to.equal('Review added successfully');
         expect(data.review).to.have.property('user_id', userId);
+        expect(data.review).to.have.property('email', email);
         expect(data.review).to.have.property('movie_id', movieId);
         expect(data.review).to.have.property('rating', rating);
         expect(data.review).to.have.property('info', info);
@@ -173,13 +179,13 @@ describe('REVIEWS', () => {
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ movieId })
+            body: JSON.stringify({ title })
         });
 
         const data = await response.json();
 
         expect(response.status).to.equal(400);
-        expect(data.message).to.equal('Movie ID and rating are required');
+        expect(data.message).to.equal('Movie title and rating are required');
     });
 
     it('should not allow adding a review with invalid rating', async () => {
@@ -191,7 +197,7 @@ describe('REVIEWS', () => {
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ movieId, rating: invalidRating, info })
+            body: JSON.stringify({ title, rating: invalidRating, info })
         });
 
         const data = await response.json();
@@ -204,7 +210,7 @@ describe('REVIEWS', () => {
         const response = await fetch(url + 'reviews/new', {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ movieId, rating, info })
+            body: JSON.stringify({ title, rating, info })
         });
 
         const data = await response.json();
@@ -213,8 +219,37 @@ describe('REVIEWS', () => {
         expect(data.message).to.equal('Authorization required.');
     });
 
+    it('should get empty movie reviews', async () => {
+        const response = await fetch(url + `reviews/${notFoundTitle}`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(201);
+        expect(data.reviews).to.eql(emptyReviews);
+    });
+
+    it('should get movie reviews', async () => {
+        const response = await fetch(url + `reviews/${title}`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(201);
+        expect(data.reviews).to.be.an('array').that.is.not.empty;
+        expect(data.reviews[0]).to.include.all.keys('user_id', 'email', 'movie_id', 'rating', 'info', 'created', 'updated');
+    });
+
     it('should update the review for the movie', async () => {
-        const response = await fetch(url + `reviews/${movieId}`, {
+        const response = await fetch(url + `reviews/${title}`, {
             method: 'put',
             headers: {
                 'Content-Type': 'application/json',
@@ -232,7 +267,7 @@ describe('REVIEWS', () => {
     });
 
     it('should delete the review for the movie', async () => {
-        const response = await fetch(url + `reviews/${movieId}`, {
+        const response = await fetch(url + `reviews/${title}`, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
@@ -247,7 +282,7 @@ describe('REVIEWS', () => {
     });
 
     it('should not find a deleted review', async () => {
-        const response = await fetch(url + `reviews/${movieId}`, {
+        const response = await fetch(url + `reviews/${title}`, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
