@@ -21,7 +21,7 @@ export default function IMDbMovieList() {
             try {
                 setIsLoading(true);
 
-                const API_KEY = 'a8c709ec2704726b1be991d9949c3a64'; // Replace with your TMDb API key
+                const API_KEY = 'API_KEY_HERE'; // Replace with your TMDb API key
                 const BASE_URL = 'https://api.themoviedb.org/3';
 
                 const response = await axios.get(`${BASE_URL}/movie/popular`, {

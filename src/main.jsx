@@ -14,6 +14,7 @@ import GroupList from './components/GroupList';
 import GroupPage from './pages/GroupPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import IMDbPage from './pages/IMDbPage.jsx'; // Add IMDbPage import
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
             element: <GroupPage />
           },
         ],
+      },
+      {
+        path: '/imdb', // Add the IMDb route
+        element: <IMDbPage />
       },
     ],
   }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSearch } from '../context/SearchContext.jsx';
 import LogoutButton from './LogoutButton.jsx';
 
-export default function Header(){
+export default function Header() {
     const { searchTerm, setSearchTerm } = useSearch();
 
     const handleSearchChange = (event) => {
@@ -13,10 +13,20 @@ export default function Header(){
     return (
         <header style={{ display: 'flex', alignItems: 'center', padding: '1rem', backgroundColor: '#333', color: '#fff' }}>
             <nav style={{ marginRight: '1rem' }}>
-                <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+                <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', gap: '1rem' }}>
                     <li>
                         <Link to="/groups" style={{ color: '#fff', textDecoration: 'none' }}>
                             Groups
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>
+                            Finnkino Movies
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/imdb" style={{ color: '#fff', textDecoration: 'none' }}>
+                            IMDb Movies
                         </Link>
                     </li>
                 </ul>
@@ -31,7 +41,7 @@ export default function Header(){
                     style={{ padding: '0.5rem', width: '200px' }}
                 />
             </div>
-            <LogoutButton/>
+            <LogoutButton />
         </header>
     );
 }
