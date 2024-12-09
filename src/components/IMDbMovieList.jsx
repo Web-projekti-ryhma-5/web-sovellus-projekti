@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-import MovieCard from './MovieCard.jsx'; // Reuse existing MovieCard component
-import { useSearch } from '../context/SearchContext.jsx'; // Reuse search context
+import MovieCard from './MovieCard.jsx';
+import { useSearch } from '../context/SearchContext.jsx';
 
 export default function IMDbMovieList() {
     const [movies, setMovies] = useState([]);
@@ -11,6 +11,8 @@ export default function IMDbMovieList() {
     const [currentPage, setCurrentPage] = useState(1);
 
     const { searchTerm } = useSearch();
+
+    const tmdbToken = import.meta.env.VITE_TOKEN;
 
     const filteredMovies = movies?.filter((movie) =>
         movie.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -21,16 +23,19 @@ export default function IMDbMovieList() {
             try {
                 setIsLoading(true);
 
-                const API_KEY = 'API_KEY_HERE'; // Replace with your TMDb API key
-                const BASE_URL = 'https://api.themoviedb.org/3';
-
-                const response = await axios.get(`${BASE_URL}/movie/popular`, {
-                    params: {
-                        api_key: API_KEY,
-                        language: 'en-US',
-                        page: currentPage,
-                    },
-                });
+                const response = await axios.get(
+                    `https://api.themoviedb.org/3/movie/popular`,
+                    {
+                        params: {
+                            language: 'en-US',
+                            page: currentPage,
+                        },
+                        headers: {
+                            Authorization: `Bearer ${tmdbToken}`,
+                            accept: 'application/json',
+                        },
+                    }
+                );
 
                 const fetchedMovies = response.data.results.map((movie) => ({
                     title: movie.title,
