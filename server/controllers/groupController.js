@@ -62,8 +62,6 @@ const getGroupDetailsHandler = async (req, res, next) => {
             return res.status(404).json({ message: "Group not found" });
         }
 
-        // const email = await getGroupDetails(groupId);
-
         res.status(200).json({ group: { id: result.rows[0].id, title: result.rows[0].title} });
     } catch (err) {
         next(err);
@@ -105,14 +103,13 @@ const listJoinRequestsHandler = async (req, res, next) => {
 
     try {
         // Verify the user is the group owner
-        const group = await getGroupDetails(groupId);
-        if (group.rowCount === 0 || group.rows[0].owner_id !== ownerId) {
+        const groups = await getGroupDetails(groupId);
+        if (groups.rowCount === 0 || groups.rows[0].owner_id !== ownerId) {
             return res.status(403).json({ message: "You are not authorized to view this group's join requests" });
         }
 
         // Fetch join requests for the group
         const requests = await listJoinRequests(groupId);
-        console.log(requests.rows)
         res.status(200).json({requests: requests.rows});
     } catch (err) {
         next(err);
@@ -140,22 +137,20 @@ const updateJoinRequestHandler = async (req, res, next) => {
 
     try {
         const result = await updateJoinRequest(requestId, status);
-        console.log('APPROVED REQUEST' + result.status)
         if (result.rowCount === 0) {
             return res.status(404).json({ message: "Join request not found" });
         }
 
         // add new apprved member to group
-        if (result.status === 'approved') {
-            let member = await addMember(result.groupId, result.userId, false);
-            console.log('MEMBER' + member.id)
+        if (result.rows[0].request_status === 'approved') {
+            let member = await addMember(result.rows[0].group_id, result.rows[0].user_id, false);
         }
 
         res.status(200).json({request: {
-            id: result.id,
-            group_id: result.group_id,
-            request_status: result.request_status,
-            user_id: result.user_id
+            id: result.rows[0].id,
+            group_id: result.rows[0].group_id,
+            request_status: result.rows[0].request_status,
+            user_id: result.rows[0].user_id
         }});
     } catch (err) {
         next(err);

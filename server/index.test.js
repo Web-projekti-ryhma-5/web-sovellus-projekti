@@ -418,7 +418,6 @@ describe('GROUPS', () => {
 
         const requestsData = await requestsResponse.json();
         const requestId = requestsData.requests[0].id;
-        console.log("REQUEST ID" + requestId)
 
         // Approve the join request
         const response = await fetch(url + `groups/join-requests/${requestId}`, {
@@ -431,7 +430,6 @@ describe('GROUPS', () => {
         });
 
         const data = await response.json();
-        console.log(data.request.id)
 
         expect(response.status).to.equal(200);
         expect(data.request).to.have.property('id');
@@ -458,7 +456,7 @@ describe('GROUPS', () => {
     });
 
     it('should allow the owner to remove a member from the group', async () => {
-        const response = await fetch(url + `groups/${groupId}/members/1`, {
+        const response = await fetch(url + `groups/${groupId}/members/6`, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',

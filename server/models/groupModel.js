@@ -47,10 +47,10 @@ const createJoinRequest = async (groupId, userId, status = "pending") => {
     );
 };
 
-const updateJoinRequest = async (requestId, status) => {
+const updateJoinRequest = async (requestId, request_status) => {
     return pool.query(
         `UPDATE join_requests SET request_status = $1, updated = NOW() WHERE id = $2 RETURNING *;`,
-        [status, requestId]
+        [request_status, requestId]
     );
 };
 
