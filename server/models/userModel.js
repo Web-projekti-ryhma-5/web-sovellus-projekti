@@ -12,4 +12,8 @@ const getByEmail = async(email) => {
     return pool.query("select * from account where email=$1", [email]);
 }
 
-export { postUser, getByEmail, deleteUser }
+const getEmailById = async(id) => {
+    return pool.query("select email from account where id=$1", [id]);
+}
+
+export { postUser, getByEmail, deleteUser, getEmailById }
