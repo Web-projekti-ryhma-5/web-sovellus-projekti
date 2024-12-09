@@ -296,3 +296,192 @@ describe('REVIEWS', () => {
         expect(data.message).to.equal('Review not found');
     });
 });
+
+describe('GROUPS', () => {
+    const email = 'testuser3@gmail.com';
+    const password = 'testpassword1';
+    let token;
+
+    const groupName = 'Test Group';
+    let groupId;
+    const title = 'Movie 1';
+
+    const anotherEmail = 'anotheruser@gmail.com';
+    let anotherToken;
+
+    before(async () => {
+        await fetch(url + 'auth/register', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const loginResponse = await fetch(url + 'auth/login', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const loginData = await loginResponse.json();
+        token = loginData.token;
+
+        await fetch(url + 'auth/register', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: anotherEmail, password })
+        });
+
+        const anotherLoginResponse = await fetch(url + 'auth/login', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: anotherEmail, password })
+        });
+
+        const anotherLoginData = await anotherLoginResponse.json();
+        anotherToken = anotherLoginData.token;
+    });
+
+    it('should create a new group', async () => {
+        const response = await fetch(url + 'groups', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ title: groupName })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(201);
+        expect(data).to.have.property('group');
+        expect(data.group).to.have.property('id');
+        expect(data.group.title).to.equal(groupName);
+
+        groupId = data.group.id;
+    });
+
+    it('should list all groups', async () => {
+        const response = await fetch(url + 'groups', {
+            method: 'get',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.groups).to.be.an('array').that.is.not.empty;
+        expect(data.groups[0]).to.have.property('id', groupId);
+        expect(data.groups[0]).to.have.property('title', groupName);
+    });
+
+    it('should allow a user to request to join a group', async () => {
+        const response = await fetch(url + `groups/${groupId}/join-requests`, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': anotherToken
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(201);
+        expect(data.request).to.include.all.keys('id', 'user_id', 'group_id', 'request_status');
+    });
+
+    it('should allow the owner to view join requests', async () => {
+        const response = await fetch(url + `groups/${groupId}/join-requests`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.requests).to.be.an('array').that.is.not.empty;
+        expect(data.requests[0]).to.include.all.keys('id', 'user_id', 'group_id', 'request_status');
+    });
+
+    it('should allow the owner to approve a join request', async () => {
+        // Fetch join requests first
+        const requestsResponse = await fetch(url + `groups/${groupId}/join-requests`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const requestsData = await requestsResponse.json();
+        const requestId = requestsData.requests[0].id;
+
+        // Approve the join request
+        const response = await fetch(url + `groups/join-requests/${requestId}`, {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ status: 'approved' })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.request).to.have.property('id');
+        expect(data.request).to.have.property('user_id');
+        expect(data.request).to.have.property('group_id');
+        expect(data.request).to.have.property('request_status');
+    });
+
+    it('should allow an approved member to add a movie to the group', async () => {
+        const response = await fetch(url + `groups/${groupId}/movies`, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': anotherToken
+            },
+            body: JSON.stringify({ title: title })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(201);
+        expect(data.message).to.equal('Movie added successfully');
+        expect(data.movie).to.include.all.keys('group_id', 'movie_id');
+    });
+
+    it('should allow the owner to remove a member from the group', async () => {
+        const response = await fetch(url + `groups/${groupId}/members/6`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.message).to.equal('Member removed successfully');
+    });
+
+    it('should delete the group', async () => {
+        const response = await fetch(url + `groups/${groupId}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.message).to.equal('Group deleted');
+    });
+});

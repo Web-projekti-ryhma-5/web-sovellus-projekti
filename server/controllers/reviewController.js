@@ -67,7 +67,6 @@ export const updateReview = async (req, res, next) => {
         }
 
         let movie = await getMovieByTitle(title);
-        console.log(movie);
 
         const updatedReview = await updateReviewByUserAndMovie(userId, movie.rows[0]?.id, rating, info);
         if (updatedReview.rowCount === 0) {
