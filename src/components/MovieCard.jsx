@@ -20,9 +20,12 @@ export default function MovieCard({ movie }) {
                 className="movie-image"
             />
             <h3>{movie.title}</h3>
-            <p>Theater: {movie.theater}</p>
-            <p>Show Start: {movie.showStart}</p>
-            <p>Length: {movie.lengthInMinutes} minutes</p>
+            { movie.theater && <p>Theater: {movie.theater}</p> }
+            { movie.showStart && <p>Show Start: {movie.showStart}</p> }
+            { movie.lengthInMinutes && <p>Length: {movie.lengthInMinutes} minutes</p> }
+
+            { movie.rating && <p>Rating: {movie.rating}</p> }
+            { movie.releaseDate && <p>Released: {movie.releaseDate}</p> }
         </div>
     );
 }

@@ -41,6 +41,7 @@ export default function IMDbMovieList() {
                     title: movie.title,
                     overview: movie.overview,
                     releaseDate: movie.release_date,
+                    rating: movie.vote_average,
                     imageUrl: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
                 }));
 
