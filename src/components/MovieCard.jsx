@@ -4,8 +4,18 @@ import { useNavigate } from 'react-router-dom';
 export default function MovieCard({ movie }) {
     const navigate = useNavigate();
 
+    // const handleCardClick = () => {
+    //     navigate(`/movie?title=${encodeURIComponent(movie.title)}&eventID=${movie.eventID}`);
+    // };
+
     const handleCardClick = () => {
-        navigate(`/movie?title=${encodeURIComponent(movie.title)}&eventID=${movie.eventID}`);
+        const queryParams = new URLSearchParams();
+        queryParams.append('title', movie.title);
+        if (movie.eventID) {
+            queryParams.append('eventID', movie.eventID);
+        }
+
+        navigate(`/movie?${queryParams.toString()}`);
     };
 
     return (

@@ -97,11 +97,6 @@ export default function MoviePage() {
         fetchMovieData();
     }, [title, eventID, user]);
 
-    useEffect(() => {
-        console.log("User:", user);
-        console.log("User Review:", userReview);
-    }, [user, userReview]);
-
     const handleAddOrUpdateReview = async (e) => {
         e.preventDefault();
         try {
@@ -175,15 +170,17 @@ export default function MoviePage() {
                 <p>{movieDetails.overview}</p>
             </div>
 
-            <div className="schedule-details">
-                <h2>Showtimes</h2>
-                {schedules.map((schedule, index) => (
-                    <div key={index} className="schedule-item">
-                        <p><strong>Theater:</strong> {schedule.Theatre}</p>
-                        <p><strong>Show Start:</strong> {new Date(schedule.dttmShowStart).toLocaleString()}</p>
-                    </div>
-                ))}
-            </div>
+            { eventID &&
+                <div className="schedule-details">
+                    <h2>Showtimes</h2>
+                    {schedules.map((schedule, index) => (
+                        <div key={index} className="schedule-item">
+                            <p><strong>Theater:</strong> {schedule.Theatre}</p>
+                            <p><strong>Show Start:</strong> {new Date(schedule.dttmShowStart).toLocaleString()}</p>
+                        </div>
+                    ))}
+                </div>
+            }
 
             <div className="reviews-section">
                 <h2>Reviews</h2>
