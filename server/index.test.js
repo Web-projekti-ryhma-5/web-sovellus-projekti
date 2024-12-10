@@ -118,6 +118,9 @@ describe('AUTH', () => {
     });
 });
 
+
+
+
 describe('REVIEWS', () => {
     const email = 'testuser@gmail.com';
     const password = 'testpassword1';
@@ -126,6 +129,7 @@ describe('REVIEWS', () => {
     const notFoundTitle = 'abc';
     const emptyReviews = [];
     const title = 'Movie 1';
+    const finnkino_event = '';
 
     const userId = 4;
     const movieId = 1;
@@ -158,7 +162,7 @@ describe('REVIEWS', () => {
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ title, rating, info })
+            body: JSON.stringify({ title, finnkino_event, rating, info })
         });
 
         const data = await response.json();
@@ -185,7 +189,7 @@ describe('REVIEWS', () => {
         const data = await response.json();
 
         expect(response.status).to.equal(400);
-        expect(data.message).to.equal('Movie title and rating are required');
+        expect(data.message).to.equal('Movie title, finnkino_event and rating are required');
     });
 
     it('should not allow adding a review with invalid rating', async () => {
@@ -197,7 +201,7 @@ describe('REVIEWS', () => {
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ title, rating: invalidRating, info })
+            body: JSON.stringify({ title, finnkino_event, rating: invalidRating, info })
         });
 
         const data = await response.json();
@@ -296,6 +300,10 @@ describe('REVIEWS', () => {
         expect(data.message).to.equal('Review not found');
     });
 });
+
+
+
+
 
 describe('GROUPS', () => {
     const email = 'testuser3@gmail.com';

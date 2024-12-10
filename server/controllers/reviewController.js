@@ -21,12 +21,12 @@ export const getReviews = async (req, res, next) => {
 
 export const addReview = async (req, res, next) => {
     try {
-        const { title, rating, info } = req.body;
+        const { title, finnkino_event, rating, info } = req.body;
         const userId = req.user.id;
         const email = req.user.email;
 
-        if (!title || !rating) {
-            return res.status(400).json({ message: 'Movie title and rating are required' });
+        if (!title || finnkino_event === undefined || !rating) {
+            return res.status(400).json({ message: 'Movie title, finnkino_event and rating are required' });
         }
 
         if (!['1', '2', '3', '4', '5'].includes(rating)) {
@@ -36,7 +36,7 @@ export const addReview = async (req, res, next) => {
         let movie = await getMovieByTitle(title);
 
         if (!movie.rows[0]) {
-            movie = await postMovie(title);
+            movie = await postMovie(title, finnkino_event);
         }
 
         // Check if the user already reviewed the movie

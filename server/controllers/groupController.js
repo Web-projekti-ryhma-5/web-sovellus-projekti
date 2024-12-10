@@ -62,7 +62,12 @@ const getGroupDetailsHandler = async (req, res, next) => {
             return res.status(404).json({ message: "Group not found" });
         }
 
-        res.status(200).json({ group: { id: result.rows[0].id, title: result.rows[0].title} });
+        res.status(200).json({group: {
+            id: result.rows[0].id,
+            email: result.rows[0].email,
+            title: result.rows[0].title,
+            created: result.rows[0].created 
+        }});
     } catch (err) {
         next(err);
     }

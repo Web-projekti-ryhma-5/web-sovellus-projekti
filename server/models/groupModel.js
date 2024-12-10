@@ -18,8 +18,15 @@ const listGroups = async () => {
     return pool.query(`SELECT * FROM groups;`);
 };
 
+// GET GROUP DETAILS AND OWNER EMAIL
 const getGroupDetails = async (groupId) => {
-    return pool.query(`SELECT * FROM groups WHERE id = $1;`, [groupId]);
+    return pool.query(
+        `SELECT g.id, g.owner_id, a.email, g.title, g.created
+         FROM groups g
+         JOIN account a ON g.owner_id = a.id
+         WHERE g.id = $1;`,
+        [groupId]
+    );
 };
 
 const addMember = async (groupId, userId, isAdmin = false) => {
@@ -70,7 +77,7 @@ const addMovieToGroup = async (groupId, movieId) => {
 
 const listGroupMovies = async (groupId) => {
     return pool.query(
-        `SELECT gm.group_id, gm.movie_id, m.title, m.release_date
+        `SELECT gm.group_id, gm.movie_id, m.title, m.finnkino_event
          FROM group_movies gm
          JOIN movies m ON gm.movie_id = m.id
          WHERE gm.group_id = $1;`,

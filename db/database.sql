@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS account (
 -- Only id and movie titles are used
 CREATE TABLE IF NOT EXISTS movies (
     id SERIAL PRIMARY KEY,
-    movie_name VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    finnkino_event VARCHAR(255) DEFAULT '',
     category VARCHAR(255) DEFAULT '',
     movie_language VARCHAR(255) DEFAULT '',
     actor VARCHAR(255) DEFAULT '',
@@ -102,4 +103,4 @@ CREATE TABLE IF NOT EXISTS revoked_tokens (
 
 INSERT INTO account (email, user_password) VALUES ('user1@example.com', 'password123');
 
-INSERT INTO movies (movie_name, category, movie_language, actor, info) VALUES ('Movie 1', 'Category of Movie 1', 'Language of Movie 1', 'Actor of Movie 1', 'Description of Movie 1');
+INSERT INTO movies (title, finnkino_event, category, movie_language, actor, info) VALUES ('Movie 1', '', 'Category of Movie 1', 'Language of Movie 1', 'Actor of Movie 1', 'Description of Movie 1');
