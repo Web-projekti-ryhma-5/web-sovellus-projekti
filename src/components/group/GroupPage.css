@@ -1,0 +1,17 @@
+.group-page {
+    margin: 20px;
+}
+
+.group-page h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.group-page ul {
+    list-style: none;
+    padding: 0;
+}
+
+.group-page ul li {
+    margin: 10px 0;
+}

@@ -1,0 +1,35 @@
+.movie-form {
+    margin: 20px;
+}
+
+.movie-form h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.movie-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.movie-form label {
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.movie-form input {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.movie-form button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

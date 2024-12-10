@@ -7,13 +7,17 @@ import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext';
 import { SearchProvider } from './context/SearchContext.jsx';
 import { GroupProvider } from './context/GroupContext';
-import HomePage from './pages/HomePage.jsx';
-import MoviePage from './pages/MoviePage.jsx';
+
 import ErrorPage from './pages/ErrorPage.jsx';
-import GroupList from './components/GroupList';
-import GroupPage from './pages/GroupPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ProtectedRoute from './components/ProtectedRoute';
+
+import HomePage from './pages/HomePage.jsx';
+import MoviePage from './pages/MoviePage.jsx';
+import GroupList from './components/group/GroupList';
+import GroupPage from './components/group/GroupPage';
+import GroupForm from './components/group/GroupForm';
 import IMDbPage from './pages/IMDbPage.jsx';
 
 const router = createBrowserRouter([
@@ -41,16 +45,23 @@ const router = createBrowserRouter([
       {
         path: '/groups',
         element: <GroupList />,
-        children: [
-          {
-            path: 'groups/:id',
-            element: <GroupPage />
-          },
-        ],
       },
       {
         path: '/imdb',
         element: <IMDbPage />
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: '/groups/:groupId',
+            element: <GroupPage />
+          },
+          {
+            path: '/groups/new',
+            element: <GroupForm />
+          },
+        ],
       },
     ],
   }

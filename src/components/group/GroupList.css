@@ -1,0 +1,28 @@
+.group-list {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.group-list h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.group-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.group-list ul li {
+    margin: 10px 0;
+}
+
+.create-group-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
