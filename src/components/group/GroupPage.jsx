@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import JoinRequests from './JoinRequests';
 import './GroupPage.css';
 
 const GroupPage = () => {
@@ -10,6 +11,7 @@ const GroupPage = () => {
     const navigate = useNavigate();
     const [group, setGroup] = useState(null);
     const [movies, setMovies] = useState([]);
+    const [showJoinRequests, setShowJoinRequests] = useState(false);
 
     useEffect(() => {
         const fetchGroupDetails = async () => {
@@ -49,23 +51,40 @@ const GroupPage = () => {
         }
     };
 
+    const toggleJoinRequests = () => {
+        setShowJoinRequests((prev) => !prev);
+    };
+
     return (
-        <div className="group-page">
+        <>
             {group && (
                 <>
-                    <h1>{group.title}</h1>
                     {user.email === group.email && (
-                        <button onClick={handleDeleteGroup}>Delete Group</button>
+                        <div className="group-toolbar">
+                            <button onClick={handleDeleteGroup} className="toolbar-button delete-button">
+                                Delete Group
+                            </button>
+                            <button onClick={toggleJoinRequests} className="toolbar-button">
+                                {showJoinRequests ? 'Close Join Requests' : 'Show Join Requests'}
+                            </button>
+                        </div>
                     )}
+                    <h1>{group.title}</h1>
                     <h2>Movies</h2>
                     <ul>
                         {movies.map((movie) => (
                             <li key={movie.id}>{movie.title}</li>
                         ))}
                     </ul>
+
+                    {showJoinRequests && (
+                        <div className="join-requests-menu">
+                            <JoinRequests groupId={groupId} />
+                        </div>
+                    )}
                 </>
             )}
-        </div>
+        </>
     );
 };
 
