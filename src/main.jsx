@@ -2,8 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
+import './context/Notification.css';
 
 import App from './App.jsx';
+import { NotificationProvider } from './context/NotificationContext';
 import { AuthProvider } from './context/AuthContext';
 import { SearchProvider } from './context/SearchContext.jsx';
 import { GroupProvider } from './context/GroupContext';
@@ -69,12 +71,14 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <SearchProvider>
-        <GroupProvider>
-          <RouterProvider router={router}></RouterProvider>
-        </GroupProvider>
-      </SearchProvider>
-    </AuthProvider>
+    <NotificationProvider>
+      <AuthProvider>
+        <SearchProvider>
+          <GroupProvider>
+            <RouterProvider router={router}></RouterProvider>
+          </GroupProvider>
+        </SearchProvider>
+      </AuthProvider>
+    </NotificationProvider>
   </StrictMode>
 );

@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
 import JoinRequests from './JoinRequests';
 import './GroupPage.css';
 
 const GroupPage = () => {
     const { groupId } = useParams();
     const { token, user } = useAuth();
+    const { showNotification } = useNotification();
+
     const navigate = useNavigate();
     const [group, setGroup] = useState(null);
     const [movies, setMovies] = useState([]);
@@ -22,6 +25,7 @@ const GroupPage = () => {
                 setGroup(response.data.group);
             } catch (error) {
                 console.error('Error fetching group details:', error);
+                showNotification(error.response?.data?.message || 'An error occurred', 'error');
             }
         };
 
@@ -33,6 +37,7 @@ const GroupPage = () => {
                 setMovies(response.data.movies);
             } catch (error) {
                 console.error('Error fetching movies:', error);
+                showNotification(error.response?.data?.message || 'An error occurred', 'error');
             }
         };
 
@@ -48,6 +53,7 @@ const GroupPage = () => {
             navigate('/');
         } catch (error) {
             console.error('Error deleting group:', error);
+            showNotification(error.response?.data?.message || 'An error occurred', 'error');
         }
     };
 
