@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
 import './JoinRequests.css';
 
 const JoinRequests = ({ groupId }) => {
     const { token } = useAuth();
+    const { showNotification } = useNotification();
     const [requests, setRequests] = useState([]);
 
     useEffect(() => {
@@ -16,6 +18,7 @@ const JoinRequests = ({ groupId }) => {
                 setRequests(response.data.requests);
             } catch (error) {
                 console.error('Error fetching join requests:', error);
+                showNotification(error.response?.data?.message || 'An error occurred', 'error');
             }
         };
 
@@ -34,6 +37,7 @@ const JoinRequests = ({ groupId }) => {
             );
         } catch (error) {
             console.error('Error updating join request:', error);
+            showNotification(error.response?.data?.message || 'An error occurred', 'error');
         }
     };
 

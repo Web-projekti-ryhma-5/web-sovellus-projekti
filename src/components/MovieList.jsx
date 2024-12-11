@@ -4,6 +4,7 @@ import xml2js from 'xml2js';
 
 import MovieCard from './MovieCard.jsx';
 import { useSearch } from '../context/SearchContext.jsx';
+import { useNotification } from '../context/NotificationContext';
 
 export default function MovieList({ selectedDate }) {
     const [movies, setMovies] = useState([]);
@@ -11,6 +12,7 @@ export default function MovieList({ selectedDate }) {
     const [isError, setIsError] = useState(false);
 
     const { searchTerm } = useSearch();
+    const { showNotification } = useNotification();
 
     const filteredMovies = movies?.filter((movie) =>
         movie.title && movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
