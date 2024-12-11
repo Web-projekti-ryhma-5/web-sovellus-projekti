@@ -5,6 +5,8 @@ import {
     getGroupDetails,
     addMember,
     removeMember,
+    getMember,
+    listMembers,
     createJoinRequest,
     updateJoinRequest,
     listJoinRequests,
@@ -55,11 +57,17 @@ const listGroupsHandler = async (req, res, next) => {
 // Get group details
 const getGroupDetailsHandler = async (req, res, next) => {
     const { groupId } = req.params;
+    const memberId = req.user.id;
 
     try {
         const result = await getGroupDetails(groupId);
         if (result.rowCount === 0) {
             return res.status(404).json({ message: "Group not found" });
+        }
+
+        const member = await getMember(groupId, memberId);
+        if (member.rowCount === 0 && memberId !== result.rows[0].owner_id) {
+            return res.status(401).json({ message: "Only group members can see details" });
         }
 
         res.status(200).json({group: {
@@ -68,6 +76,24 @@ const getGroupDetailsHandler = async (req, res, next) => {
             title: result.rows[0].title,
             created: result.rows[0].created 
         }});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const getMembers = async (req, res, next) => {
+    const { groupId } = req.params;
+    const memberId = req.user.id;
+
+    try {
+        const member = await getMember(groupId, memberId);
+        if (member.rowCount === 0) {
+            return res.status(401).json({ message: "Only group members can see details" });
+        }
+
+        // Fetch join requests for the group
+        const requests = await listMembers(groupId);
+        res.status(200).json({requests: requests.rows});
     } catch (err) {
         next(err);
     }
@@ -198,6 +224,7 @@ export {
     deleteGroupHandler,
     listGroupsHandler,
     getGroupDetailsHandler,
+    getMembers,
     addMemberHandler,
     removeMemberHandler,
     createJoinRequestHandler,

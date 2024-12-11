@@ -4,6 +4,7 @@ import {
     deleteGroupHandler,
     listGroupsHandler,
     getGroupDetailsHandler,
+    getMembers,
     addMemberHandler,
     removeMemberHandler,
     createJoinRequestHandler,
@@ -20,12 +21,16 @@ groupRouter.get("/", listGroupsHandler);
 groupRouter.post("/", auth, createGroupHandler);
 groupRouter.delete("/:groupId", auth, deleteGroupHandler);
 groupRouter.get("/:groupId", auth, getGroupDetailsHandler);
+
+groupRouter.get("/:groupId/members", auth, getMembers);
 groupRouter.post("/:groupId/members", auth, addMemberHandler);
 groupRouter.delete("/:groupId/members/:userId", auth, removeMemberHandler);
+
+groupRouter.get("/:groupId/join-requests", auth, listJoinRequestsHandler);
 groupRouter.post("/:groupId/join-requests", auth, createJoinRequestHandler);
 groupRouter.put("/join-requests/:requestId", auth, updateJoinRequestHandler);
+
 groupRouter.get("/:groupId/movies", auth, listGroupMoviesHandler);
 groupRouter.post("/:groupId/movies", auth, addMovieToGroupHandler);
-groupRouter.get("/:groupId/join-requests", auth, listJoinRequestsHandler);
 
 export default groupRouter;

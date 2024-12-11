@@ -43,6 +43,13 @@ const removeMember = async (groupId, userId) => {
     );
 };
 
+const getMember = async (groupId, userId) => {
+    return pool.query(
+        `SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2;`,
+        [groupId, userId]
+    );
+};
+
 const listMembers = async (groupId) => {
     return pool.query(`SELECT * FROM group_members WHERE group_id = $1;`, [groupId]);
 };
@@ -92,6 +99,7 @@ export {
     getGroupDetails,
     addMember,
     removeMember,
+    getMember,
     listMembers,
     createJoinRequest,
     updateJoinRequest,

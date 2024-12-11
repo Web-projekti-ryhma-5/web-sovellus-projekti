@@ -24,7 +24,7 @@ const GroupPage = () => {
                 });
                 setGroup(response.data.group);
             } catch (error) {
-                console.error('Error fetching group details:', error);
+                navigate('/groups');
                 showNotification(error.response?.data?.message || 'An error occurred', 'error');
             }
         };
