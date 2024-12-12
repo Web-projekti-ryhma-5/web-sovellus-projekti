@@ -24,6 +24,7 @@
 .group-toolbar {
     display: flex;
     justify-content: flex-start;
+    flex-wrap: wrap;
     align-items: center;
     width: 100%;
     background-color: #f8f9fa;
@@ -48,8 +49,16 @@
     background-color: #0056b3;
 }
 
+.accept-button {
+    background-color: #28a745;
+}
+
+.accept-button:hover {
+    background-color: #218838;
+}
+
 .delete-button {
-    background-color: #ff0000;
+    background-color: #ff4d4d;
 }
 
 .delete-button:hover {
@@ -60,7 +69,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 300px;
+    width: 250px;
     height: 100%;
     background: white;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);

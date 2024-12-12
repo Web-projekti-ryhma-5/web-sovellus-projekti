@@ -28,7 +28,7 @@ const JoinRequests = ({ groupId }) => {
     const handleRequestUpdate = async (requestId, status) => {
         try {
             await axios.put(
-                `http://localhost:3001/api/join-requests/${requestId}`,
+                `http://localhost:3001/api/groups/join-requests/${requestId}`,
                 { status },
                 { headers: { Authorization: token } }
             );
@@ -48,8 +48,8 @@ const JoinRequests = ({ groupId }) => {
                 {requests.map((request) => (
                     <li key={request.id}>
                         <span>User ID: {request.user_id}</span>
-                        <button onClick={() => handleRequestUpdate(request.id, 'approved')}>Approve</button>
-                        <button onClick={() => handleRequestUpdate(request.id, 'declined')}>Decline</button>
+                        <button className="accept-button" onClick={() => handleRequestUpdate(request.id, 'approved')}>Approve</button>
+                        <button className="delete-button" onClick={() => handleRequestUpdate(request.id, 'declined')}>Decline</button>
                     </li>
                 ))}
             </ul>

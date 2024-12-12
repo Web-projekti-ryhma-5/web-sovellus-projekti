@@ -51,7 +51,13 @@ const getMember = async (groupId, userId) => {
 };
 
 const listMembers = async (groupId) => {
-    return pool.query(`SELECT * FROM group_members WHERE group_id = $1;`, [groupId]);
+    return pool.query(
+        `SELECT gm.group_id, gm.user_id, a.email, gm.is_admin, gm.created
+         FROM group_members gm
+         JOIN account a ON gm.user_id = a.id
+         WHERE gm.group_id = $1;`,
+        [groupId]
+    );
 };
 
 const createJoinRequest = async (groupId, userId, status = "pending") => {
@@ -68,9 +74,16 @@ const updateJoinRequest = async (requestId, request_status) => {
     );
 };
 
+const getPendingJoinRequest = async (group_id, user_id) => {
+    return pool.query(
+        `SELECT * FROM join_requests WHERE group_id = $1 AND user_id = $2 AND request_status = 'pending';`,
+        [group_id, user_id]
+    );
+};
+
 const listJoinRequests = async (groupId) => {
     return pool.query(
-        `SELECT * FROM join_requests WHERE group_id = $1;`,
+        `SELECT * FROM join_requests WHERE group_id = $1 AND request_status = 'pending';`,
         [groupId]
     );
 };
@@ -103,6 +116,7 @@ export {
     listMembers,
     createJoinRequest,
     updateJoinRequest,
+    getPendingJoinRequest,
     listJoinRequests,
     addMovieToGroup,
     listGroupMovies,

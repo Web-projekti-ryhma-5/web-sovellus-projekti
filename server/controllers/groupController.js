@@ -9,6 +9,7 @@ import {
     listMembers,
     createJoinRequest,
     updateJoinRequest,
+    getPendingJoinRequest,
     listJoinRequests,
     addMovieToGroup,
     listGroupMovies,
@@ -86,14 +87,18 @@ const getMembers = async (req, res, next) => {
     const memberId = req.user.id;
 
     try {
+        const result = await getGroupDetails(groupId);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
         const member = await getMember(groupId, memberId);
-        if (member.rowCount === 0) {
+        if (member.rowCount === 0 && memberId !== result.rows[0].owner_id) {
             return res.status(401).json({ message: "Only group members can see details" });
         }
 
-        // Fetch join requests for the group
-        const requests = await listMembers(groupId);
-        res.status(200).json({requests: requests.rows});
+        const members = await listMembers(groupId);
+        res.status(200).json({members: members.rows});
     } catch (err) {
         next(err);
     }
@@ -154,6 +159,24 @@ const createJoinRequestHandler = async (req, res, next) => {
     const userId = req.user.id;
 
     try {
+        // Verify the user is the group owner
+        const groups = await getGroupDetails(groupId);
+        if (groups.rows[0].owner_id === userId) {
+            return res.status(403).json({ message: "Owner may not join group" });
+        }
+
+        // Verify the user is the group member
+        const member = await getMember(groupId, userId);
+        if (member.rowCount > 0) {
+            return res.status(403).json({ message: "You are the group member already" });
+        }
+
+        // Verify the user has no pending requests
+        const requests = await getPendingJoinRequest(groupId, userId);
+        if (requests.rowCount > 0) {
+            return res.status(403).json({ message: "You have already sent the request" });
+        }
+
         const request = await createJoinRequest(groupId, userId);
         res.status(201).json({request: request.rows[0]});
     } catch (err) {
