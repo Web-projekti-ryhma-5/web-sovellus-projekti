@@ -71,23 +71,45 @@ const GroupPage = () => {
         if (!showMembersList) setShowJoinRequests(false);
     };
 
+    const leaveGroup = async (userId) => {
+        try {
+            await axios.delete(`http://localhost:3001/api/groups/${groupId}/members/${userId}`, {
+                headers: { Authorization: token },
+            });
+            navigate('/groups');
+            showNotification('Group left', 'success');
+        } catch (error) {
+            console.error('Error removing member:', error);
+            showNotification(error.response?.data?.message || 'An error occurred', 'error');
+        }
+    };
+
     return (
         <>
             {group && (
                 <>
-                    {user.email === group.email && (
-                        <div className="group-toolbar">
-                            <button onClick={handleDeleteGroup} className="toolbar-button delete-button">
-                                Delete Group
+                    <div className="group-toolbar">
+                        { /* Leave group button is allowed for members only */
+                        user.email !== group.email && (
+                            <button onClick={() => leaveGroup(user.id)} className="toolbar-button delete-button">
+                                Leave
                             </button>
-                            <button onClick={toggleJoinRequests} className="toolbar-button">
-                                {showJoinRequests ? 'Close Join Requests' : 'Show Join Requests'}
-                            </button>
-                            <button onClick={toggleMembersList} className="toolbar-button">
-                                {showMembersList ? 'Close Members' : 'Show Members'}
-                            </button>
-                        </div>
-                    )}
+                        )}
+                        {/* These buttons are allowed for group owner only */
+                        user.email === group.email && (
+                            <>
+                                <button onClick={handleDeleteGroup} className="toolbar-button delete-button">
+                                    Delete Group
+                                </button>
+                                <button onClick={toggleJoinRequests} className="toolbar-button">
+                                    {showJoinRequests ? 'Close Join Requests' : 'Show Join Requests'}
+                                </button>
+                                <button onClick={toggleMembersList} className="toolbar-button">
+                                    {showMembersList ? 'Close Members' : 'Show Members'}
+                                </button>
+                            </>
+                        )}
+                    </div>
                     <h1>{group.title}</h1>
                     <h2>Movies</h2>
                     <ul>
