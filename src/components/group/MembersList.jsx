@@ -43,7 +43,7 @@ const MembersList = ({ groupId }) => {
             <h2>Members</h2>
             <ul>
                 {members.map((member) => (
-                    <li key={member.id} className="member-item">
+                    <li key={member.user_id} className="member-item">
                         <span>{member.email}</span>
                         <button onClick={() => removeMember(member.user_id)} className="remove-member-button">
                             Remove

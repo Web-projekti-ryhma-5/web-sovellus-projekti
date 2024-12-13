@@ -117,11 +117,33 @@ const addMemberHandler = async (req, res, next) => {
     }
 };
 
-// Remove a member from a group
+/* 
+Remove a member from a group
+Any group member can leave group.
+Only owner can remove other members.
+Owner cannot leave the group.
+*/
 const removeMemberHandler = async (req, res, next) => {
     const { groupId, userId } = req.params;
 
     try {
+        const group = await getGroupDetails(groupId);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        if (userId === group.rows[0].owner_id) {
+            return res.status(401).json({ message: "Owner can't leave the group" });
+        }
+
+        const person = await getMember(groupId, userId);
+        if (person.rowCount === 0) {
+            return res.status(404).json({ message: "Member not found in group" });
+        }
+        if (userId !== person.rows[0].user_id) {
+            return res.status(404).json({ message: "Not found" });
+        }
+
         const member = await removeMember(groupId, userId);
         if (member.rowCount === 0) {
             return res.status(404).json({ message: "Member not found in group" });
