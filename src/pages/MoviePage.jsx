@@ -110,6 +110,7 @@ export default function MoviePage() {
                 endpoint,
                 {
                     title: movieDetails.title,
+                    finnkino_event: eventID ? eventID : '',
                     rating: reviewRating.toString(),
                     info: reviewText,
                 },
@@ -145,7 +146,7 @@ export default function MoviePage() {
                 },
             });
 
-            setReviews(reviews.filter((review) => review.id !== userReview.id));
+            setReviews(reviews.filter((review) => review.email !== user.email));
             setUserReview(null);
             setReviewText('');
             setReviewRating(1);
