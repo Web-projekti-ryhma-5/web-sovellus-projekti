@@ -15,12 +15,13 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
-import HomePage from './pages/HomePage.jsx';
-import MoviePage from './pages/MoviePage.jsx';
+import HomePage from './pages/HomePage';
+import MoviePage from './pages/MoviePage';
 import GroupList from './components/group/GroupList';
 import GroupPage from './components/group/GroupPage';
+import ReviewsPage from './pages/ReviewsPage';
 import GroupForm from './components/group/GroupForm';
-import IMDbPage from './pages/IMDbPage.jsx';
+import IMDbPage from './pages/IMDbPage';
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
         element: <MoviePage />
       },
       {
+        path: '/imdb',
+        element: <IMDbPage />
+      },
+      {
         path: '/register',
         element: <RegisterPage />
       },
@@ -45,12 +50,12 @@ const router = createBrowserRouter([
         element: <LoginPage />
       },
       {
-        path: '/groups',
-        element: <GroupList />,
+        path: '/reviews',
+        element: <ReviewsPage />,
       },
       {
-        path: '/imdb',
-        element: <IMDbPage />
+        path: '/groups',
+        element: <GroupList />,
       },
       {
         element: <ProtectedRoute />,

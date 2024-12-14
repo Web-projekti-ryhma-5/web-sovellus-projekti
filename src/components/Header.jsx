@@ -15,18 +15,23 @@ export default function Header() {
             <nav style={{ marginRight: '1rem' }}>
                 <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', gap: '1rem' }}>
                     <li>
+                        <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>
+                            Home
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/imdb" style={{ color: '#fff', textDecoration: 'none' }}>
+                            TMDB Movies
+                        </Link>
+                    </li>
+                    <li>
                         <Link to="/groups" style={{ color: '#fff', textDecoration: 'none' }}>
                             Groups
                         </Link>
                     </li>
                     <li>
-                        <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>
-                            Finnkino Movies
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/imdb" style={{ color: '#fff', textDecoration: 'none' }}>
-                            IMDb Movies
+                        <Link to="/reviews" style={{ color: '#fff', textDecoration: 'none' }}>
+                            Reviews
                         </Link>
                     </li>
                 </ul>
