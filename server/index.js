@@ -1,9 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import session from 'express-session';
+import swaggerUi from 'swagger-ui-express';
 import {userRouter} from './routes/userRouter.js';
 import {reviewRouter} from './routes/reviewRouter.js';
 import groupRouter from './routes/groupRouter.js';
+import swaggerDocument from './swagger.json' assert { type: "json" };
 
 dotenv.config();
 
@@ -15,6 +18,11 @@ const root = process.env.ROOT;
 app.use(root + '/auth', userRouter);
 app.use(root + '/groups', groupRouter);
 app.use(root + '/reviews', reviewRouter);
+
+// Swagger docs
+app.use(root + '/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   console.log(err)
