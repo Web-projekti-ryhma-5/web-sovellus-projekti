@@ -3,11 +3,10 @@ import axios from 'axios';
 import xml2js from 'xml2js';
 
 import MovieCard from './MovieCard.jsx';
-import AddMovieCard from './group/addmovie/AddMovieCard.jsx';
 import { useSearch } from '../context/SearchContext.jsx';
 import { useNotification } from '../context/NotificationContext';
 
-export default function MovieList({ selectedDate, groupId }) {
+export default function MovieList({ selectedDate }) {
     const [movies, setMovies] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -69,7 +68,7 @@ export default function MovieList({ selectedDate, groupId }) {
     return (
         <div className='movie-list'>
             {filteredMovies?.map((movie, index) => (
-                groupId ? <AddMovieCard key={index} movie={movie} groupId={groupId} /> : <MovieCard key={index} movie={movie} />
+                <MovieCard key={index} movie={movie} />
             ))}
         </div>
     );
