@@ -10,6 +10,7 @@ import {
     createJoinRequestHandler,
     updateJoinRequestHandler,
     addMovieToGroupHandler,
+    deleteMovieFromGroupHandler,
     listGroupMoviesHandler,
     listJoinRequestsHandler,
 } from "../controllers/groupController.js";
@@ -32,5 +33,6 @@ groupRouter.put("/join-requests/:requestId", auth, updateJoinRequestHandler);
 
 groupRouter.get("/:groupId/movies", auth, listGroupMoviesHandler);
 groupRouter.post("/:groupId/movies", auth, addMovieToGroupHandler);
+groupRouter.delete("/:groupId/movies/:title", auth, deleteMovieFromGroupHandler);
 
 export default groupRouter;

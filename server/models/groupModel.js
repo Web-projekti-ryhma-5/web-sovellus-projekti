@@ -95,6 +95,13 @@ const addMovieToGroup = async (groupId, movieId) => {
     );
 };
 
+const deleteMovieFromGroup = async (groupId, movieId) => {
+    return pool.query(
+        `DELETE FROM group_movies WHERE group_id = $1 AND movie_id = $2;`,
+        [groupId, movieId]
+    );
+};
+
 const listGroupMovies = async (groupId) => {
     return pool.query(
         `SELECT gm.group_id, gm.movie_id, m.title, m.finnkino_event
@@ -119,5 +126,6 @@ export {
     getPendingJoinRequest,
     listJoinRequests,
     addMovieToGroup,
+    deleteMovieFromGroup,
     listGroupMovies,
 };

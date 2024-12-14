@@ -12,6 +12,7 @@ import {
     getPendingJoinRequest,
     listJoinRequests,
     addMovieToGroup,
+    deleteMovieFromGroup,
     listGroupMovies,
 } from "../models/groupModel.js";
 import { postMovie, getMovieByTitle } from '../models/movieModel.js';
@@ -125,27 +126,32 @@ Owner cannot leave the group.
 */
 const removeMemberHandler = async (req, res, next) => {
     const { groupId, userId } = req.params;
+    const authUserId = req.user.id;
 
     try {
+        // get group owner information
         const group = await getGroupDetails(groupId);
-        if (result.rowCount === 0) {
+        if (group.rowCount === 0) {
+            console.log("Group not found")
             return res.status(404).json({ message: "Group not found" });
         }
 
-        if (userId === group.rows[0].owner_id) {
-            return res.status(401).json({ message: "Owner can't leave the group" });
-        }
-
-        const person = await getMember(groupId, userId);
-        if (person.rowCount === 0) {
-            return res.status(404).json({ message: "Member not found in group" });
-        }
-        if (userId !== person.rows[0].user_id) {
+        // do not allow group members to remove other members
+        if (authUserId !== group.rows[0].owner_id && authUserId !== userId) {
+            console.log("Not found")
             return res.status(404).json({ message: "Not found" });
         }
 
+        // owner cannot be removed from group
+        if (userId === group.rows[0].owner_id) {
+            console.log("Owner can't leave the group")
+            return res.status(401).json({ message: "Owner can't leave the group" });
+        }
+
+        // remove member
         const member = await removeMember(groupId, userId);
         if (member.rowCount === 0) {
+            console.log("Member not found in group")
             return res.status(404).json({ message: "Member not found in group" });
         }
         res.status(200).json({ message: "Member removed successfully" });
@@ -236,17 +242,58 @@ const updateJoinRequestHandler = async (req, res, next) => {
 // Add a movie to a group
 const addMovieToGroupHandler = async (req, res, next) => {
     const { groupId } = req.params;
-    const { title } = req.body;
-
-    let movie = await getMovieByTitle(title);
-
-    if (!movie.rows[0]) {
-        movie = await postMovie(title);
-    }
+    const { title, finnkino_event } = req.body;
+    const userId = req.user.id;
 
     try {
+        // If user is not the group owner or member, he may not add movie
+        const groups = await getGroupDetails(groupId);
+        const member = await getMember(groupId, userId);
+        if (member.rowCount === 0 && groups.rows[0].owner_id !== userId) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+        // title and eventid are required (event id may be empty)
+        if (!title || finnkino_event === undefined) {
+            return res.status(400).json({ message: 'Invalid input' });
+        }
+
+        // try to find existing movie or add it otherwise
+        let movie = await getMovieByTitle(title);
+        if (movie.rowCount === 0) {
+            movie = await postMovie(title, finnkino_event);
+        }
+
+        // add movie to group
         const result = await addMovieToGroup(groupId, movie.rows[0].id);
         res.status(201).json({ message: 'Movie added successfully', movie: result.rows[0]});
+    } catch (err) {
+        next(err);
+    }
+};
+
+// Delete a movie from group
+const deleteMovieFromGroupHandler = async (req, res, next) => {
+    const { groupId, title } = req.params;
+    const userId = req.user.id;
+
+    try {
+        // If user is not the group owner or member, he may not delete movie
+        const groups = await getGroupDetails(groupId);
+        const member = await getMember(groupId, userId);
+        if (member.rowCount === 0 && groups.rows[0].owner_id !== userId) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+        // try to find existing movie
+        const movie = await getMovieByTitle(title);
+        if (movie.rowCount === 0) {
+            return res.status(404).json({ message: "Not found" });
+        }
+
+        // delete movie from group
+        await deleteMovieFromGroup(groupId, movie.rows[0].id);
+        res.status(201).json({ message: 'Movie deleted successfully' });
     } catch (err) {
         next(err);
     }
@@ -275,6 +322,7 @@ export {
     createJoinRequestHandler,
     updateJoinRequestHandler,
     addMovieToGroupHandler,
+    deleteMovieFromGroupHandler,
     listGroupMoviesHandler,
     listJoinRequestsHandler
 };
