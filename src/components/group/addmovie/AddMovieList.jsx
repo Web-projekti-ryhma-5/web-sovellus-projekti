@@ -56,7 +56,7 @@ export default function AddMovieList({ groupId }) {
 
             try {
                 setIsLoadingMovies(true);
-                const response = await axios.get(`https://www.finnkino.fi/xml/Schedule/?dt=${selectedDate}`);
+                const response = await axios.get(`https://www.finnkino.fi/xml/Schedule/?dt=${formatDate(selectedDate)}`);
                 const parser = new xml2js.Parser({ explicitArray: false });
 
                 const result = await parser.parseStringPromise(response.data);
@@ -91,7 +91,7 @@ export default function AddMovieList({ groupId }) {
         };
 
         fetchMovies();
-    }, [selectedDate, showNotification]);
+    }, [selectedDate]);
 
     const handleNext = () => {
         const newIndex = currentIndex + 7;
