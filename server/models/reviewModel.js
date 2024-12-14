@@ -1,5 +1,14 @@
 import { pool } from '../db.js';
 
+export const getAllReviews = async () => {
+    const query = `
+        SELECT r.email, r.movie_id, r.rating, r.info, r.created, m.title, m.finnkino_event
+        FROM reviews r
+        JOIN movies m ON r.movie_id = m.id;
+    `;
+    return pool.query(query, []);
+};
+
 export const getAllReviewsByMovieId = async (movie_id) => {
     const query = `
         SELECT * FROM reviews
