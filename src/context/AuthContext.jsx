@@ -36,8 +36,6 @@ export const AuthProvider = ({ children }) => {
             setToken(token);
 
             const decodedToken = JSON.parse(atob(token.split('.')[1]));
-            console.log("LOGIN EMAIL: " + decodedToken.email)
-            console.log("LOGIN ID: " + decodedToken.id)
             setUser({ email: decodedToken.email, id: decodedToken.id });
             localStorage.setItem('authToken', token);
 
