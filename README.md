@@ -29,3 +29,9 @@ Web-ohjelmoinnin sovellusprojekti (syksy 2024)
 1) Open project root folder in terminal
 
 2) `npm run dev`
+
+## Swagger docs
+
+1) Run server and database
+
+2) Open http://localhost:3001/api/docs
