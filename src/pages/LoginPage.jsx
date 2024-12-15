@@ -14,7 +14,6 @@ export default function LoginPage() {
         try {
             await login(email, password);
             setError('');
-            console.log('User logged in');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to login');
         }

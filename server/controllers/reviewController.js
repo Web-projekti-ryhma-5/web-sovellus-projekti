@@ -1,5 +1,23 @@
-import { getAllReviewsByMovieId, postReview, getReviewByUserAndMovie, updateReviewByUserAndMovie, deleteReviewByUserAndMovie } from '../models/reviewModel.js';
+import {
+    getAllReviews,
+    getAllReviewsByMovieId,
+    postReview,
+    getReviewByUserAndMovie,
+    updateReviewByUserAndMovie,
+    deleteReviewByUserAndMovie
+} from '../models/reviewModel.js';
 import { postMovie, getMovieByTitle } from '../models/movieModel.js';
+
+export const getAllUsersReviews = async (req, res, next) => {
+    try {
+
+        const reviews = await getAllReviews();
+
+        return res.status(201).json({reviews: reviews.rows});
+    } catch (err) {
+        return next(err);
+    }
+};
 
 export const getReviews = async (req, res, next) => {
     try {

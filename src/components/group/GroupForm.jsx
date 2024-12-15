@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
 import './GroupForm.css';
 
 const GroupForm = () => {
     const [groupName, setGroupName] = useState('');
     const { token } = useAuth();
+    const { showNotification } = useNotification();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -18,9 +20,11 @@ const GroupForm = () => {
                 { title: groupName },
                 { headers: { Authorization: token } }
             );
-            navigate('/');
+            navigate('/groups');
+            showNotification('Group created', 'success');
         } catch (error) {
             console.error('Error creating group:', error);
+            showNotification(error.response?.data?.message || 'An error occurred', 'error');
         }
     };
 

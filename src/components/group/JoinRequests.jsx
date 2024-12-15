@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
 import './JoinRequests.css';
 
 const JoinRequests = ({ groupId }) => {
     const { token } = useAuth();
+    const { showNotification } = useNotification();
     const [requests, setRequests] = useState([]);
 
     useEffect(() => {
@@ -16,6 +18,7 @@ const JoinRequests = ({ groupId }) => {
                 setRequests(response.data.requests);
             } catch (error) {
                 console.error('Error fetching join requests:', error);
+                showNotification(error.response?.data?.message || 'An error occurred', 'error');
             }
         };
 
@@ -25,7 +28,7 @@ const JoinRequests = ({ groupId }) => {
     const handleRequestUpdate = async (requestId, status) => {
         try {
             await axios.put(
-                `http://localhost:3001/api/join-requests/${requestId}`,
+                `http://localhost:3001/api/groups/join-requests/${requestId}`,
                 { status },
                 { headers: { Authorization: token } }
             );
@@ -34,6 +37,7 @@ const JoinRequests = ({ groupId }) => {
             );
         } catch (error) {
             console.error('Error updating join request:', error);
+            showNotification(error.response?.data?.message || 'An error occurred', 'error');
         }
     };
 
@@ -44,8 +48,8 @@ const JoinRequests = ({ groupId }) => {
                 {requests.map((request) => (
                     <li key={request.id}>
                         <span>User ID: {request.user_id}</span>
-                        <button onClick={() => handleRequestUpdate(request.id, 'approved')}>Approve</button>
-                        <button onClick={() => handleRequestUpdate(request.id, 'declined')}>Decline</button>
+                        <button className="accept-button" onClick={() => handleRequestUpdate(request.id, 'approved')}>Approve</button>
+                        <button className="delete-button" onClick={() => handleRequestUpdate(request.id, 'declined')}>Decline</button>
                     </li>
                 ))}
             </ul>

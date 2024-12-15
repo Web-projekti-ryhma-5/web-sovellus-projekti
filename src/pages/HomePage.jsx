@@ -1,11 +1,14 @@
 import React from 'react';
-import MovieList from '../components/MovieList';
-import './HomePage.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import xml2js from 'xml2js';
+import MovieList from '../components/MovieList';
+import { useNotification } from '../context/NotificationContext';
+import './HomePage.css';
 
 export default function HomePage() {
+    const { showNotification } = useNotification();
+
     const [scheduleDates, setScheduleDates] = useState([]);
     const [visibleDates, setVisibleDates] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);

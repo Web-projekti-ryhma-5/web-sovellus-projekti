@@ -5,10 +5,14 @@ import {
     getGroupDetails,
     addMember,
     removeMember,
+    getMember,
+    listMembers,
     createJoinRequest,
     updateJoinRequest,
+    getPendingJoinRequest,
     listJoinRequests,
     addMovieToGroup,
+    deleteMovieFromGroup,
     listGroupMovies,
 } from "../models/groupModel.js";
 import { postMovie, getMovieByTitle } from '../models/movieModel.js';
@@ -55,11 +59,17 @@ const listGroupsHandler = async (req, res, next) => {
 // Get group details
 const getGroupDetailsHandler = async (req, res, next) => {
     const { groupId } = req.params;
+    const memberId = req.user.id;
 
     try {
         const result = await getGroupDetails(groupId);
         if (result.rowCount === 0) {
             return res.status(404).json({ message: "Group not found" });
+        }
+
+        const member = await getMember(groupId, memberId);
+        if (member.rowCount === 0 && memberId !== result.rows[0].owner_id) {
+            return res.status(401).json({ message: "Only group members can see details" });
         }
 
         res.status(200).json({group: {
@@ -68,6 +78,28 @@ const getGroupDetailsHandler = async (req, res, next) => {
             title: result.rows[0].title,
             created: result.rows[0].created 
         }});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const getMembers = async (req, res, next) => {
+    const { groupId } = req.params;
+    const memberId = req.user.id;
+
+    try {
+        const result = await getGroupDetails(groupId);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        const member = await getMember(groupId, memberId);
+        if (member.rowCount === 0 && memberId !== result.rows[0].owner_id) {
+            return res.status(401).json({ message: "Only group members can see details" });
+        }
+
+        const members = await listMembers(groupId);
+        res.status(200).json({members: members.rows});
     } catch (err) {
         next(err);
     }
@@ -86,13 +118,40 @@ const addMemberHandler = async (req, res, next) => {
     }
 };
 
-// Remove a member from a group
+/* 
+Remove a member from a group
+Any group member can leave group.
+Only owner can remove other members.
+Owner cannot leave the group.
+*/
 const removeMemberHandler = async (req, res, next) => {
     const { groupId, userId } = req.params;
+    const authUserId = req.user.id;
 
     try {
+        // get group owner information
+        const group = await getGroupDetails(groupId);
+        if (group.rowCount === 0) {
+            console.log("Group not found")
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        // do not allow group members to remove other members
+        if (authUserId !== group.rows[0].owner_id && authUserId !== userId) {
+            console.log("Not found")
+            return res.status(404).json({ message: "Not found" });
+        }
+
+        // owner cannot be removed from group
+        if (userId === group.rows[0].owner_id) {
+            console.log("Owner can't leave the group")
+            return res.status(401).json({ message: "Owner can't leave the group" });
+        }
+
+        // remove member
         const member = await removeMember(groupId, userId);
         if (member.rowCount === 0) {
+            console.log("Member not found in group")
             return res.status(404).json({ message: "Member not found in group" });
         }
         res.status(200).json({ message: "Member removed successfully" });
@@ -128,6 +187,24 @@ const createJoinRequestHandler = async (req, res, next) => {
     const userId = req.user.id;
 
     try {
+        // Verify the user is the group owner
+        const groups = await getGroupDetails(groupId);
+        if (groups.rows[0].owner_id === userId) {
+            return res.status(403).json({ message: "Owner may not join group" });
+        }
+
+        // Verify the user is the group member
+        const member = await getMember(groupId, userId);
+        if (member.rowCount > 0) {
+            return res.status(403).json({ message: "You are the group member already" });
+        }
+
+        // Verify the user has no pending requests
+        const requests = await getPendingJoinRequest(groupId, userId);
+        if (requests.rowCount > 0) {
+            return res.status(403).json({ message: "You have already sent the request" });
+        }
+
         const request = await createJoinRequest(groupId, userId);
         res.status(201).json({request: request.rows[0]});
     } catch (err) {
@@ -165,17 +242,58 @@ const updateJoinRequestHandler = async (req, res, next) => {
 // Add a movie to a group
 const addMovieToGroupHandler = async (req, res, next) => {
     const { groupId } = req.params;
-    const { title } = req.body;
-
-    let movie = await getMovieByTitle(title);
-
-    if (!movie.rows[0]) {
-        movie = await postMovie(title);
-    }
+    const { title, finnkino_event } = req.body;
+    const userId = req.user.id;
 
     try {
+        // If user is not the group owner or member, he may not add movie
+        const groups = await getGroupDetails(groupId);
+        const member = await getMember(groupId, userId);
+        if (member.rowCount === 0 && groups.rows[0].owner_id !== userId) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+        // title and eventid are required (event id may be empty)
+        if (!title || finnkino_event === undefined) {
+            return res.status(400).json({ message: 'Invalid input' });
+        }
+
+        // try to find existing movie or add it otherwise
+        let movie = await getMovieByTitle(title);
+        if (movie.rowCount === 0) {
+            movie = await postMovie(title, finnkino_event);
+        }
+
+        // add movie to group
         const result = await addMovieToGroup(groupId, movie.rows[0].id);
         res.status(201).json({ message: 'Movie added successfully', movie: result.rows[0]});
+    } catch (err) {
+        next(err);
+    }
+};
+
+// Delete a movie from group
+const deleteMovieFromGroupHandler = async (req, res, next) => {
+    const { groupId, title } = req.params;
+    const userId = req.user.id;
+
+    try {
+        // If user is not the group owner or member, he may not delete movie
+        const groups = await getGroupDetails(groupId);
+        const member = await getMember(groupId, userId);
+        if (member.rowCount === 0 && groups.rows[0].owner_id !== userId) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+        // try to find existing movie
+        const movie = await getMovieByTitle(title);
+        if (movie.rowCount === 0) {
+            return res.status(404).json({ message: "Not found" });
+        }
+
+        // delete movie from group
+        await deleteMovieFromGroup(groupId, movie.rows[0].id);
+        res.status(201).json({ message: 'Movie deleted successfully' });
     } catch (err) {
         next(err);
     }
@@ -198,11 +316,13 @@ export {
     deleteGroupHandler,
     listGroupsHandler,
     getGroupDetailsHandler,
+    getMembers,
     addMemberHandler,
     removeMemberHandler,
     createJoinRequestHandler,
     updateJoinRequestHandler,
     addMovieToGroupHandler,
+    deleteMovieFromGroupHandler,
     listGroupMoviesHandler,
     listJoinRequestsHandler
 };

@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
+    const navigate = useNavigate();
     const { register, user } = useAuth();
+    const { showNotification } = useNotification();
+    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await register(email, password);
-            setMessage('Registration successful. Please login.');
             setError('');
+            navigate('/login');
+            showNotification('Registration successful', 'success');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to register');
-            setMessage('');
         }
     };
 
@@ -30,7 +33,6 @@ export default function RegisterPage() {
         <>
             <form className="register-form" onSubmit={handleSubmit}>
                 <h2>Register</h2>
-                {message && <p style={{ color: 'green' }}>{message}</p>}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <div className="form-group">
                     <label htmlFor="email">Email</label>

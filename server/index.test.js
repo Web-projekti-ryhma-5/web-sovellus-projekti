@@ -313,6 +313,7 @@ describe('GROUPS', () => {
     const groupName = 'Test Group';
     let groupId;
     const title = 'Movie 1';
+    const finnkino_event = '';
 
     const anotherEmail = 'anotheruser@gmail.com';
     let anotherToken;
@@ -453,7 +454,7 @@ describe('GROUPS', () => {
                 'Content-Type': 'application/json',
                 'Authorization': anotherToken
             },
-            body: JSON.stringify({ title: title })
+            body: JSON.stringify({ title: title, finnkino_event: finnkino_event })
         });
 
         const data = await response.json();

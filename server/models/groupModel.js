@@ -43,8 +43,21 @@ const removeMember = async (groupId, userId) => {
     );
 };
 
+const getMember = async (groupId, userId) => {
+    return pool.query(
+        `SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2;`,
+        [groupId, userId]
+    );
+};
+
 const listMembers = async (groupId) => {
-    return pool.query(`SELECT * FROM group_members WHERE group_id = $1;`, [groupId]);
+    return pool.query(
+        `SELECT gm.group_id, gm.user_id, a.email, gm.is_admin, gm.created
+         FROM group_members gm
+         JOIN account a ON gm.user_id = a.id
+         WHERE gm.group_id = $1;`,
+        [groupId]
+    );
 };
 
 const createJoinRequest = async (groupId, userId, status = "pending") => {
@@ -61,9 +74,16 @@ const updateJoinRequest = async (requestId, request_status) => {
     );
 };
 
+const getPendingJoinRequest = async (group_id, user_id) => {
+    return pool.query(
+        `SELECT * FROM join_requests WHERE group_id = $1 AND user_id = $2 AND request_status = 'pending';`,
+        [group_id, user_id]
+    );
+};
+
 const listJoinRequests = async (groupId) => {
     return pool.query(
-        `SELECT * FROM join_requests WHERE group_id = $1;`,
+        `SELECT * FROM join_requests WHERE group_id = $1 AND request_status = 'pending';`,
         [groupId]
     );
 };
@@ -71,6 +91,13 @@ const listJoinRequests = async (groupId) => {
 const addMovieToGroup = async (groupId, movieId) => {
     return pool.query(
         `INSERT INTO group_movies (group_id, movie_id) VALUES ($1, $2) RETURNING *;`,
+        [groupId, movieId]
+    );
+};
+
+const deleteMovieFromGroup = async (groupId, movieId) => {
+    return pool.query(
+        `DELETE FROM group_movies WHERE group_id = $1 AND movie_id = $2;`,
         [groupId, movieId]
     );
 };
@@ -92,10 +119,13 @@ export {
     getGroupDetails,
     addMember,
     removeMember,
+    getMember,
     listMembers,
     createJoinRequest,
     updateJoinRequest,
+    getPendingJoinRequest,
     listJoinRequests,
     addMovieToGroup,
+    deleteMovieFromGroup,
     listGroupMovies,
 };

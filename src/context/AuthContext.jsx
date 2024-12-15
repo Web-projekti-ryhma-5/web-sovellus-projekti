@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
                     localStorage.removeItem('authToken');
                 } else {
                     setToken(storedToken);
-                    setUser({ email: decodedToken.email });
+                    setUser({ email: decodedToken.email, id: decodedToken.id });
                 }
             } catch (error) {
                 localStorage.removeItem('authToken');
@@ -33,9 +33,10 @@ export const AuthProvider = ({ children }) => {
                 password,
             });
             const { token } = response.data;
-
             setToken(token);
-            setUser({ email });
+
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            setUser({ email: decodedToken.email, id: decodedToken.id });
             localStorage.setItem('authToken', token);
 
         } catch (error) {

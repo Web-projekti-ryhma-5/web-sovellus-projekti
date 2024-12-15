@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
 import './GroupList.css';
 
 const GroupList = () => {
     const { token } = useAuth();
+    const { showNotification } = useNotification();
+
     const [groups, setGroups] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchGroups = async () => {
@@ -15,23 +19,66 @@ const GroupList = () => {
                 setGroups(response.data.groups);
             } catch (error) {
                 console.error('Error fetching groups:', error);
+                showNotification(error.response?.data?.message || 'An error occurred', 'error');
             }
         };
 
         fetchGroups();
     }, []);
 
+    const handleJoinGroup = async (groupId) => {
+        try {
+            await axios.post(
+                `http://localhost:3001/api/groups/${groupId}/join-requests`,
+                {},
+                {
+                    headers: { Authorization: token },
+                }
+            );
+            showNotification('Request sent', 'success');
+        } catch (error) {
+            console.error('Error sending join request:', error);
+            showNotification(error.response?.data?.message || 'An error occurred', 'error');
+        }
+    };
+
+    const handleRowClick = (groupId) => {
+        try {
+            navigate(`/groups/${groupId}`);
+        } catch (error) {
+            showNotification(error.response?.data?.message || 'An error occurred', 'error');
+        }
+    };
+
     return (
         <div className="group-list">
             <h1>Groups</h1>
-            <Link to="/groups/new" className="create-group-link">Create New Group</Link>
-            <ul>
+            <Link to="/groups/new" className="create-group-link">
+                Create New Group
+            </Link>
+            <div className="group-list-table">
                 {groups.map((group) => (
-                    <li key={group.id}>
-                        <Link to={`/groups/${group.id}`}>{group.title}</Link>
-                    </li>
+                    <div
+                        key={group.id}
+                        className="group-row"
+                        onClick={() => handleRowClick(group.id)}
+                    >
+                        <div className="group-title">{group.title}</div>
+                        <div className="group-created">
+                            Created: {new Date(group.created).toLocaleDateString()}
+                        </div>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleJoinGroup(group.id);
+                            }}
+                            className="join-button"
+                        >
+                            Join
+                        </button>
+                    </div>
                 ))}
-            </ul>
+            </div>
         </div>
     );
 };
