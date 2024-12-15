@@ -1,0 +1,22 @@
+.login-button {
+    padding: 0.5rem 1rem;
+    background-color: #444;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.logout-button {
+    padding: 0.5rem 1rem;
+    max-width: 6em;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.login-button:hover,
+.logout-button:hover {
+    background-color: #555;
+}

@@ -3,6 +3,7 @@ import axios from 'axios';
 import xml2js from 'xml2js';
 
 import AddMovieCard from './AddMovieCard.jsx';
+import SearchBar from '../../SearchBar.jsx';
 import { useSearch } from '../../../context/SearchContext.jsx';
 import { useNotification } from '../../../context/NotificationContext';
 
@@ -162,7 +163,7 @@ export default function AddMovieList({ groupId }) {
                     Next
                 </button>
             </div>
-
+            <SearchBar/>
             {isLoadingMovies ? (
                 <div>Loading movies...</div>
             ) : isErrorMovies ? (

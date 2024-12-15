@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import MovieCard from './MovieCard.jsx';
+import SearchBar from './SearchBar.jsx';
 import { useSearch } from '../context/SearchContext.jsx';
 
 export default function IMDbMovieList() {
@@ -86,6 +87,7 @@ export default function IMDbMovieList() {
                     Next
                 </button>
             </div>
+            <SearchBar/>
             <div className="movie-list">
                 {filteredMovies?.map((movie, index) => (
                     <MovieCard key={index} movie={movie} />

@@ -221,7 +221,7 @@ export default function MoviePage() {
                         {userReview && (
                             <button
                                 type="button"
-                                className="delete-button"
+                                className="delete-review-button"
                                 onClick={handleDeleteReview}
                             >
                                 Delete Review

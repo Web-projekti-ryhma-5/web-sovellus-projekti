@@ -3,6 +3,7 @@ import axios from 'axios';
 import xml2js from 'xml2js';
 
 import MovieCard from './MovieCard.jsx';
+import SearchBar from './SearchBar.jsx';
 import { useSearch } from '../context/SearchContext.jsx';
 import { useNotification } from '../context/NotificationContext';
 
@@ -66,10 +67,13 @@ export default function MovieList({ selectedDate }) {
     if (isError) return <div>Error fetching movies.</div>;
 
     return (
-        <div className='movie-list'>
-            {filteredMovies?.map((movie, index) => (
-                <MovieCard key={index} movie={movie} />
-            ))}
-        </div>
+        <>
+            <SearchBar/>
+            <div className='movie-list'>
+                {filteredMovies?.map((movie, index) => (
+                    <MovieCard key={index} movie={movie} />
+                ))}
+            </div>
+        </>
     );
 }

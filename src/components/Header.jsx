@@ -1,56 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSearch } from '../context/SearchContext.jsx';
 import LogoutButton from './LogoutButton.jsx';
+import './Header.css';
 
 export default function Header() {
     const { searchTerm, setSearchTerm } = useSearch();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
     return (
-        <header style={{ display: 'flex', alignItems: 'center', padding: '1rem', backgroundColor: '#333', color: '#fff' }}>
-            <nav style={{ marginRight: '1rem' }}>
-                <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', gap: '1rem' }}>
+        <header className="header">
+            <button className="menu-toggle" onClick={toggleMenu}>
+                ☰
+            </button>
+            <nav className={`nav ${isMenuOpen ? 'open' : ''}`}>
+                <ul>
                     <li>
-                        <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>
-                            Home
-                        </Link>
+                        <Link to="/">Home</Link>
                     </li>
                     <li>
-                        <Link to="/imdb" style={{ color: '#fff', textDecoration: 'none' }}>
-                            TMDB Movies
-                        </Link>
+                        <Link to="/imdb">TMDB Movies</Link>
                     </li>
                     <li>
-                        <Link to="/groups" style={{ color: '#fff', textDecoration: 'none' }}>
-                            Groups
-                        </Link>
+                        <Link to="/groups">Groups</Link>
                     </li>
                     <li>
-                        <Link to="/reviews" style={{ color: '#fff', textDecoration: 'none' }}>
-                            Reviews
-                        </Link>
+                        <Link to="/reviews">Reviews</Link>
                     </li>
                     <li>
-                        <Link to="/profile" style={{ color: '#fff', textDecoration: 'none' }}>
-                            Profile
-                        </Link>
+                        <Link to="/profile">Profile</Link>
                     </li>
                 </ul>
             </nav>
-            <div style={{ flex: 1 }}>
+            {/* <div className="search-container">
                 <h1>Finnkino Movies</h1>
                 <input
                     type="text"
                     placeholder="Search movies..."
                     value={searchTerm}
                     onChange={handleSearchChange}
-                    style={{ padding: '0.5rem', width: '200px' }}
                 />
-            </div>
+            </div> */}
             <LogoutButton />
         </header>
     );

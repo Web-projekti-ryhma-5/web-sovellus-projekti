@@ -1,0 +1,29 @@
+.search-container {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    margin: 1rem auto;
+    max-width: 1000px;
+    max-height: 70px;
+}
+
+.search-input {
+    width: 800px !important;
+    padding: 0.75rem;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+}
+
+@media (max-width: 1024px) {
+    .search-input {
+        width: 300px !important;
+    }
+}

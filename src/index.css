@@ -36,6 +36,7 @@ header, footer {
 main {
   display: flex;
   flex-direction: column;
+  justify-items: flex-start;
   align-items: center;
   min-height: 80vh;
 }

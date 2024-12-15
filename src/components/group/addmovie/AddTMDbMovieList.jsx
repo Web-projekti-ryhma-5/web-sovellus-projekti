@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import AddMovieCard from './AddMovieCard.jsx';
+import SearchBar from '../../SearchBar.jsx';
 import { useSearch } from '../../../context/SearchContext.jsx';
 
 export default function AddTMDbMovieList({ groupId }) {
@@ -86,6 +87,7 @@ export default function AddTMDbMovieList({ groupId }) {
                     Next
                 </button>
             </div>
+            <SearchBar/>
             <div className="movie-list">
                 {filteredMovies?.map((movie, index) => (
                     <AddMovieCard key={index} movie={movie} groupId={groupId} />

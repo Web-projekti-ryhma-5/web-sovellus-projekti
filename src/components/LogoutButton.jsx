@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
+import './LogoutButton.css';
 
 export default function LogoutButton() {
     const { logout, user } = useAuth();
@@ -18,33 +19,14 @@ export default function LogoutButton() {
 
     if (!user) return (
         <div>
-            <Link
-                to="/login"
-                style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#444',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    border: 'none',
-                }}
-            >
+            <Link to="/login" className="login-button">
                 Login
             </Link>
         </div>
     );
 
     return (
-        <button
-            onClick={handleLogout}
-            style={{
-                padding: '0.5rem 1rem',
-                maxWidth: '6em',
-                backgroundColor: '#444',
-                color: '#fff',
-                border: 'none',
-                cursor: 'pointer',
-            }}
-        >
+        <button onClick={handleLogout} className="logout-button">
             Logout
         </button>
     );
