@@ -3,7 +3,7 @@ Web-ohjelmoinnin sovellusprojekti (syksy 2024)
 
 # Run app
 
-1) Register your app on imdb to get api token. Create .env file, copy values from .env.vite and paste your imdb token
+1) Register your app on imdb to get JWT token (NOT API KEY!). Create .env file, copy values from .env.vite and paste your imdb token
 
 2) Open server folder and create .env file inside it. Copy all values from .env.example
 
