@@ -14,6 +14,9 @@
 }
 
 .profile-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 20px;
     text-align: center;
 }
@@ -154,4 +157,69 @@
 
 .dialog-close-button:hover {
     background-color: darkred;
+}
+
+.confirmation-dialog-content {
+    background-color: #fff;
+    border-radius: 8px;
+    width: 400px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.dialog-body {
+    margin: 20px 0;
+}
+
+.dialog-body p {
+    font-size: 1rem;
+    color: #333;
+}
+
+.confirm-button,
+.cancel-button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.confirm-button {
+    background-color: #d9534f;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.confirm-button:hover {
+    background-color: #c9302c;
+}
+
+.cancel-button {
+    background-color: #f7f7f7;
+    color: #555;
+    transition: background-color 0.3s;
+}
+
+.cancel-button:hover {
+    background-color: #e6e6e6;
+}
+
+.delete-account-button {
+    background-color: #d9534f;
+    color: white;
+    width: 100px;
+    border: none;
+    padding: 5px;
+    margin-left: 10px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.delete-account-button:hover {
+    background-color: #ff1a1a;
 }
