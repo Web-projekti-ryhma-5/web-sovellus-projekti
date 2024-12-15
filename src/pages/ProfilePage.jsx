@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 
@@ -6,6 +7,7 @@ import AddFavouriteMovieList from '../components/profile/AddFavouriteMovieList';
 import './ProfilePage.css';
 
 export default function ProfilePage() {
+    const navigate = useNavigate();
     const { token, user } = useAuth();
     const { showNotification } = useNotification();
 
@@ -63,6 +65,12 @@ export default function ProfilePage() {
         }
     };
 
+    const handleClick = (title) => {
+        const queryParams = new URLSearchParams();
+        queryParams.append('title', title);
+        navigate(`/movie?${queryParams.toString()}`);
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error loading movie details.</div>;
 
@@ -76,8 +84,30 @@ export default function ProfilePage() {
                 <h2>Favourite Movies</h2>
                 <ul className="favourites-list">
                     {favourites.map((movie, index) => (
-                        <li key={index} className="favourite-item">
-                            {movie.title}
+                        // <div 
+                        //     className="review-card" 
+                        //     key={index} 
+                        //     onClick={() => handleClick(review)}
+                        // >
+                        //     <div className="review-header">
+                        //         <h2 className="movie-title">{review.title}</h2>
+                        //         <p className="review-rating">Rating: {review.rating}/5</p>
+                        //     </div>
+                        //     <p className="review-info">{review.info}</p>
+                        //     <div className="review-footer">
+                        //         <p className="review-author">By: {review.email}</p>
+                        //         <p className="review-date">
+                        //             {new Date(review.created).toLocaleDateString()}
+                        //         </p>
+                        //     </div>
+                        // </div>
+                        <li
+                            key={index}
+                            className="favourite-item"
+                        >
+                            <div className="favourite-item-box" onClick={() => handleClick(movie.title)}>
+                                <p>{movie.title}</p>
+                            </div>
                             <button
                                 className="delete-button"
                                 onClick={() => deleteFavourite(movie.title)}
