@@ -84,23 +84,6 @@ export default function ProfilePage() {
                 <h2>Favourite Movies</h2>
                 <ul className="favourites-list">
                     {favourites.map((movie, index) => (
-                        // <div 
-                        //     className="review-card" 
-                        //     key={index} 
-                        //     onClick={() => handleClick(review)}
-                        // >
-                        //     <div className="review-header">
-                        //         <h2 className="movie-title">{review.title}</h2>
-                        //         <p className="review-rating">Rating: {review.rating}/5</p>
-                        //     </div>
-                        //     <p className="review-info">{review.info}</p>
-                        //     <div className="review-footer">
-                        //         <p className="review-author">By: {review.email}</p>
-                        //         <p className="review-date">
-                        //             {new Date(review.created).toLocaleDateString()}
-                        //         </p>
-                        //     </div>
-                        // </div>
                         <li
                             key={index}
                             className="favourite-item"

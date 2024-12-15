@@ -53,4 +53,24 @@ const logout = async (req, res, next) => {
     }
 }
 
-export {loginUser, registerUser, logout};
+const invalidateAccount = async (req, res, next) => {
+    try {
+        const email = req.user.email;
+
+        if (!email) {
+            return res.status(400).json({ message: 'Invalid request: User email not found' });
+        }
+
+        const result = await deleteUser(email);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Account not found' });
+        }
+
+        res.status(200).json({ message: 'Account invalidated successfully' });
+    } catch (err) {
+        return next(err);
+    }
+};
+
+
+export {loginUser, registerUser, logout, invalidateAccount};

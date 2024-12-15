@@ -116,6 +116,7 @@ describe('AUTH', () => {
         expect(response.status).to.equal(401);
         expect(data.message).to.equal('Token has been revoked');
     });
+    
 });
 
 
@@ -315,13 +316,6 @@ describe('FAVOURITE MOVIES', () => {
     const nonExistentTitle = 'Nonexistent Movie';
 
     before(async () => {
-        // // Register user
-        // await fetch(url + 'auth/register', {
-        //     method: 'post',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ email, password })
-        // });
-
         // Login user
         const loginResponse = await fetch(url + 'auth/login', {
             method: 'post',
@@ -606,4 +600,67 @@ describe('GROUPS', () => {
         expect(response.status).to.equal(200);
         expect(data.message).to.equal('Group deleted');
     });
+});
+
+describe('INVALIDATE ACCOUNT', () => {
+
+    const email = 'testuser3@gmail.com';
+    const password = 'testpassword1';
+    let token;
+
+    before(async () => {
+        const loginResponse = await fetch(url + 'auth/login', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const loginData = await loginResponse.json();
+        token = loginData.token;
+    });
+
+    it('should invalidate a user account with valid token', async () => {
+        const response = await fetch(url + 'auth/invalidate', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+    
+        const data = await response.json();
+    
+        expect(response.status).to.equal(200);
+        expect(data.message).to.equal('Account invalidated successfully');
+    });
+    
+    it('should not invalidate account without token', async () => {
+        const response = await fetch(url + 'auth/invalidate', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    
+        const data = await response.json();
+    
+        expect(response.status).to.equal(401);
+        expect(data.message).to.equal('Authorization required.');
+    });
+    
+    it('should not invalidate account with invalid token', async () => {
+        const response = await fetch(url + 'auth/invalidate', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'invalid_token'
+            }
+        });
+    
+        const data = await response.json();
+    
+        expect(response.status).to.equal(403);
+        expect(data.message).to.equal('Invalid credentials.');
+    });
+    
 });
