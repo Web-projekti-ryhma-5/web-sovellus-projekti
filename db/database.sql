@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS account (
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Only id and movie titles are used
+-- Only finnkino_event and movie titles are used
 CREATE TABLE IF NOT EXISTS movies (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
