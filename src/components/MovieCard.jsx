@@ -20,11 +20,11 @@ export default function MovieCard({ movie }) {
             onClick={handleCardClick}
             style={{ cursor: 'pointer' }}
         >
-            <img 
+            {movie.imageUrl && <img 
                 src={movie.imageUrl} 
                 alt={`Poster for ${movie.title}`} 
                 className="movie-image"
-            />
+            />}
             <h3>{movie.title}</h3>
             { movie.theater && <p>Theater: {movie.theater}</p> }
             { movie.showStart && <p>Show Start: {movie.showStart}</p> }

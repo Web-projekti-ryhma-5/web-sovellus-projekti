@@ -6,7 +6,7 @@ export const addFavourite = async (req, res, next) => {
         const { title, finnkino_event } = req.body;
         const userId = req.user.id;
 
-        if (!title || finnkino_event) {
+        if (!title || finnkino_event === undefined) {
             return res.status(400).json({ message: 'Movie title is required' });
         }
 

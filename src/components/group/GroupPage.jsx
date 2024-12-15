@@ -164,7 +164,6 @@ const GroupPage = () => {
                             </div>
                         ))}
                     </div>
-
                     {showJoinRequests && (
                         <div className="join-requests-menu">
                             <JoinRequests groupId={groupId} />

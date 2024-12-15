@@ -3,7 +3,6 @@ import axios from 'axios';
 import xml2js from 'xml2js';
 
 import AddMovieCard from './AddMovieCard.jsx';
-import MovieCard from '../../MovieCard.jsx';
 import { useSearch } from '../../../context/SearchContext.jsx';
 import { useNotification } from '../../../context/NotificationContext';
 
@@ -171,7 +170,7 @@ export default function AddMovieList({ groupId }) {
             ) : (
                 <div className="movie-list">
                     {filteredMovies?.map((movie, index) => (
-                        groupId ? <AddMovieCard key={index} movie={movie} groupId={groupId} /> : <MovieCard key={index} movie={movie} />
+                        <AddMovieCard key={index} movie={movie} groupId={groupId} />
                     ))}
                 </div>
             )}

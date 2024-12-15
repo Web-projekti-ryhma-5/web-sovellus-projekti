@@ -67,15 +67,6 @@
     background-color: #ff7875;
 }
 
-/* .group-page ul {
-    list-style: none;
-    padding: 0;
-}
-
-.group-page ul li {
-    margin: 10px 0;
-} */
-
 .group-toolbar {
     display: flex;
     justify-content: flex-start;

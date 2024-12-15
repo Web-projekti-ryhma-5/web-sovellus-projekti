@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
+
+import AddFavouriteMovieList from '../components/profile/AddFavouriteMovieList';
 import './ProfilePage.css';
 
 export default function ProfilePage() {
@@ -11,7 +13,7 @@ export default function ProfilePage() {
     const [isError, setIsError] = useState(false);
 
     const [favourites, setFavourites] = useState([]);
-    const [newMovie, setNewMovie] = useState('');
+    const [showAddMovie, setShowAddMovie] = useState(false);
 
     useEffect(() => {
         const fetchFavourites = async () => {
@@ -39,34 +41,6 @@ export default function ProfilePage() {
 
         fetchFavourites();
     }, [token]);
-
-    const addFavourite = async () => {
-        if (!newMovie) {
-            showNotification('Title is required', 'error');
-            return;
-        }
-
-        try {
-            const response = await fetch('http://localhost:3001/api/favourites/new', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: token,
-                },
-                body: JSON.stringify({ title: newMovie, finnkino_event: '' }),
-            });
-
-            const data = await response.json();
-
-            if (data.favourite) {
-                setFavourites([...favourites, { title: newMovie }]);
-                setNewMovie('');
-            }
-        } catch(error) {
-            console.error(error)
-            showNotification(error.response?.data?.message || 'An error occurred', 'error');
-        }
-    };
 
     const deleteFavourite = async (title) => {
         try {
@@ -113,18 +87,21 @@ export default function ProfilePage() {
                         </li>
                     ))}
                 </ul>
-                <div className="add-movie">
-                    <input
-                        type="text"
-                        value={newMovie}
-                        placeholder="Add new movie title"
-                        onChange={(e) => setNewMovie(e.target.value)}
-                    />
-                    <button className="add-button" onClick={addFavourite}>
-                        Add
-                    </button>
-                </div>
+                <button className='add-button' onClick={() => setShowAddMovie(true)}>Add Movie</button>
             </div>
+            {showAddMovie && (
+                <div className="dialog-modal">
+                    <div className="dialog-modal-content">
+                        <div className="dialog-header">
+                            <h2>Add Movie</h2>
+                            <button className="dialog-close-button" onClick={() => setShowAddMovie(false)}>
+                                ×
+                            </button>
+                        </div>
+                        <AddFavouriteMovieList />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
