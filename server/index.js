@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import session from 'express-session';
 import swaggerUi from 'swagger-ui-express';
+
 import {userRouter} from './routes/userRouter.js';
 import {reviewRouter} from './routes/reviewRouter.js';
 import groupRouter from './routes/groupRouter.js';
-import swaggerDocument from './swagger.json' assert { type: "json" };
+// use assert keyword instead if with keyword does not work
+import swaggerDocument from './swagger.json' with { type: "json" };
 
 dotenv.config();
 
