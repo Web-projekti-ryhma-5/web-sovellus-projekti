@@ -10,4 +10,4 @@ reviewRouter.post('/new', auth, addReview);
 reviewRouter.put('/:title', auth, updateReview);
 reviewRouter.delete('/:title', auth, deleteReview);
 
-export {reviewRouter};
+export default reviewRouter;

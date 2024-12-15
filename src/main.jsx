@@ -14,6 +14,7 @@ import ErrorPage from './pages/ErrorPage.jsx';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProfilePage from './pages/ProfilePage';
 
 import HomePage from './pages/HomePage';
 import MoviePage from './pages/MoviePage';
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
           {
             path: '/groups/new',
             element: <GroupForm />
+          },
+          {
+            path: '/profile',
+            element: <ProfilePage />
           },
         ],
       },

@@ -2,8 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import {userRouter} from './routes/userRouter.js';
-import {reviewRouter} from './routes/reviewRouter.js';
+import reviewRouter from './routes/reviewRouter.js';
 import groupRouter from './routes/groupRouter.js';
+import favouriteMoviesRouter from './routes/favouriteMoviesRouter.js';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 const root = process.env.ROOT;
 app.use(root + '/auth', userRouter);
+app.use(root + '/favourites', favouriteMoviesRouter);
 app.use(root + '/groups', groupRouter);
 app.use(root + '/reviews', reviewRouter);
 app.use((err, req, res, next) => {

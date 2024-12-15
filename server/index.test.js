@@ -304,6 +304,119 @@ describe('REVIEWS', () => {
 
 
 
+describe('FAVOURITE MOVIES', () => {
+    const email = 'testuser@gmail.com';
+    const password = 'testpassword1';
+    let token;
+
+    const userId = 4;
+    const movieTitle = 'Movie 1';
+    const finnkino_event = '';
+    const nonExistentTitle = 'Nonexistent Movie';
+
+    before(async () => {
+        // // Register user
+        // await fetch(url + 'auth/register', {
+        //     method: 'post',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({ email, password })
+        // });
+
+        // Login user
+        const loginResponse = await fetch(url + 'auth/login', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const loginData = await loginResponse.json();
+        token = loginData.token;
+    });
+
+    it('should add a movie to favorites', async () => {
+        const response = await fetch(url + 'favourites/new', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ title: movieTitle, finnkino_event: finnkino_event })
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(201);
+        expect(data.message).to.equal('Movie added to favourites successfully');
+        expect(data.favourite).to.have.property('user_id', userId);
+        expect(data.favourite).to.have.property('movie_id');
+    });
+
+    it('should retrieve favorite movies', async () => {
+        const response = await fetch(url + 'favourites', {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.favourites).to.be.an('array').that.is.not.empty;
+        expect(data.favourites[0]).to.include.all.keys('movie_id', 'title', 'finnkino_event');
+    });
+
+    it('should remove a movie from favorites', async () => {
+        const response = await fetch(url + `favourites/${movieTitle}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.message).to.equal('Movie removed from favourites successfully');
+    });
+
+    it('should not remove a movie that is not in favorites', async () => {
+        const response = await fetch(url + `favourites/${nonExistentTitle}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(404);
+        expect(data.message).to.equal('Movie not found');
+    });
+
+    it('should return an empty array for favorite movies after deletion', async () => {
+        const response = await fetch(url + 'favourites', {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data.favourites).to.be.an('array').that.is.empty;
+    });
+});
+
+
+
+
+
 
 describe('GROUPS', () => {
     const email = 'testuser3@gmail.com';

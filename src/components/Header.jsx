@@ -34,6 +34,11 @@ export default function Header() {
                             Reviews
                         </Link>
                     </li>
+                    <li>
+                        <Link to="/profile" style={{ color: '#fff', textDecoration: 'none' }}>
+                            Profile
+                        </Link>
+                    </li>
                 </ul>
             </nav>
             <div style={{ flex: 1 }}>
