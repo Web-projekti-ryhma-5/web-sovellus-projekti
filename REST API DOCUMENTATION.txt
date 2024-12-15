@@ -1,0 +1,417 @@
+REST API DOCUMENTATION
+====================
+
+Base URL: http://localhost:3001/api
+Version: 1.0
+Rate Limit: None
+
+Authentication
+-------------
+Most endpoints require JWT (JSON Web Token) authentication.
+Add the token to the Authorization header:
+
+Authorization: <jwt_token>
+
+Common Error Responses
+--------------------
+400 Bad Request: Invalid input parameters
+401 Unauthorized: Missing or invalid authentication
+403 Forbidden: Valid authentication but insufficient permissions
+404 Not Found: Resource not found
+409 Conflict: Resource already exists
+500 Internal Server Error: Server error
+
+
+1. AUTHENTICATION ENDPOINTS
+=========================
+
+Register User
+------------
+Description: Create a new user account
+POST /auth/register
+Request:
+{
+    "email": "string",     // Valid email format required
+    "password": "string"   // Minimum 8 characters
+}
+Response: 201 Created
+{
+    "message": "Registration success"
+}
+Error Responses:
+- 400: Invalid email or password format
+- 409: Email already exists
+
+Login
+-----
+Description: Authenticate user and receive JWT token
+POST /auth/login
+Request:
+{
+    "email": "string",
+    "password": "string"
+}
+Response: 200 OK
+{
+    "token": "jwt_token"
+}
+Error Response:
+- 401: Invalid credentials
+
+Logout
+------
+Description: Invalidate current JWT token
+POST /auth/logout
+Auth: Required
+Response: 200 OK
+{
+    "message": "Successfully logged out"
+}
+Error Response:
+- 401: Invalid or missing token
+
+
+2. REVIEW ENDPOINTS
+==================
+
+Get Reviews
+----------
+Description: Get all reviews for a specific movie
+GET /reviews/:title
+Parameters:
+- title: Movie title (URL encoded)
+Auth: Not Required
+Response: 200 OK
+{
+    "reviews": [
+        {
+            "user_id": "number",
+            "email": "string",
+            "movie_id": "number",
+            "rating": "string",
+            "info": "string",
+            "created": "timestamp",
+            "updated": "timestamp"
+        }
+    ]
+}
+Error Response:
+- 404: Movie not found
+
+Add Review
+---------
+Description: Create a new review for a movie
+POST /reviews/new
+Auth: Required
+Request:
+{
+    "title": "string",          // Movie title
+    "finnkino_event": "string", // Optional Finnkino event ID
+    "rating": "string",         // Rating value
+    "info": "string"           // Review text
+}
+Response: 201 Created
+{
+    "message": "Review added successfully",
+    "review": {
+        "user_id": "number",
+        "email": "string",
+        "movie_id": "number",
+        "rating": "string",
+        "info": "string"
+    }
+}
+Error Responses:
+- 400: Invalid review data
+- 409: Review already exists for this user and movie
+
+Update Review
+------------
+Description: Update an existing review
+PUT /reviews/:title
+Parameters:
+- title: Movie title (URL encoded)
+Auth: Required
+Request:
+{
+    "rating": "string",    // New rating value
+    "info": "string"      // New review text
+}
+Response: 200 OK
+{
+    "message": "Review updated successfully",
+    "review": {
+        "rating": "string",
+        "info": "string"
+    }
+}
+Error Responses:
+- 404: Review not found
+- 403: Not authorized to update this review
+
+Delete Review
+------------
+Description: Delete a review
+DELETE /reviews/:title
+Parameters:
+- title: Movie title (URL encoded)
+Auth: Required
+Response: 200 OK
+{
+    "message": "Review deleted successfully"
+}
+Error Responses:
+- 404: Review not found
+- 403: Not authorized to delete this review
+3. GROUP ENDPOINTS
+=================
+
+List Groups
+----------
+Description: Get all available groups
+GET /groups
+Auth: Not Required
+Response: 200 OK
+{
+    "groups": [
+        {
+            "id": "number",
+            "title": "string",
+            "created": "timestamp"
+        }
+    ]
+}
+
+Create Group
+-----------
+Description: Create a new movie group
+POST /groups
+Auth: Required
+Request:
+{
+    "title": "string"    // Group name, must be unique
+}
+Response: 201 Created
+{
+    "group": {
+        "id": "number",
+        "title": "string",
+        "owner_id": "number",
+        "created": "timestamp"
+    }
+}
+Error Responses:
+- 400: Invalid group data
+- 409: Group name already exists
+
+Get Group Details
+---------------
+Description: Get detailed information about a specific group
+GET /groups/:groupId
+Parameters:
+- groupId: Group identifier (number)
+Auth: Required
+Response: 200 OK
+{
+    "group": {
+        "id": "number",
+        "title": "string",
+        "owner_id": "number",
+        "email": "string",
+        "created": "timestamp",
+        "members": [
+            {
+                "user_id": "number",
+                "email": "string"
+            }
+        ]
+    }
+}
+Error Response:
+- 404: Group not found
+
+Delete Group
+-----------
+Description: Delete a group (owner only)
+DELETE /groups/:groupId
+Parameters:
+- groupId: Group identifier (number)
+Auth: Required
+Response: 200 OK
+{
+    "message": "Group deleted"
+}
+Error Responses:
+- 403: Not authorized to delete this group
+- 404: Group not found
+
+
+4. GROUP MEMBER ENDPOINTS
+=======================
+
+Add Member to Group
+-----------------
+Description: Add a new member to a group
+POST /groups/:groupId/members
+Parameters:
+- groupId: Group identifier (number)
+Auth: Required
+Request:
+{
+    "userId": "number",     // ID of user to add
+    "isAdmin": "boolean"   // Optional admin status
+}
+Response: 201 Created
+{
+    "message": "Member added successfully",
+    "member": {
+        "group_id": "number",
+        "user_id": "number",
+        "is_admin": "boolean"
+    }
+}
+Error Responses:
+- 403: Not authorized to add members
+- 404: Group or user not found
+- 409: User already a member
+
+Remove Member from Group
+----------------------
+Description: Remove a member from a group
+DELETE /groups/:groupId/members/:userId
+Parameters:
+- groupId: Group identifier (number)
+- userId: User identifier (number)
+Auth: Required
+Response: 200 OK
+{
+    "message": "Member removed successfully"
+}
+Error Responses:
+- 403: Not authorized to remove members
+- 404: Member not found in group
+
+
+5. JOIN REQUEST ENDPOINTS
+=======================
+
+Create Join Request
+-----------------
+Description: Request to join a group
+POST /groups/:groupId/join-requests
+Parameters:
+- groupId: Group identifier (number)
+Auth: Required
+Response: 201 Created
+{
+    "request": {
+        "id": "number",
+        "user_id": "number",
+        "group_id": "number",
+        "request_status": "pending",
+        "created": "timestamp"
+    }
+}
+Error Responses:
+- 409: Join request already exists
+- 404: Group not found
+
+List Join Requests
+----------------
+Description: Get all join requests for a group (admin only)
+GET /groups/:groupId/join-requests
+Parameters:
+- groupId: Group identifier (number)
+Auth: Required
+Response: 200 OK
+{
+    "requests": [
+        {
+            "id": "number",
+            "user_id": "number",
+            "group_id": "number",
+            "request_status": "string",
+            "created": "timestamp"
+        }
+    ]
+}
+Error Response:
+- 403: Not authorized to view requests
+
+Update Join Request
+-----------------
+Description: Approve or decline a join request
+PUT /groups/join-requests/:requestId
+Parameters:
+- requestId: Request identifier (number)
+Auth: Required
+Request:
+{
+    "status": "string"    // "approved" or "declined"
+}
+Response: 200 OK
+{
+    "request": {
+        "id": "number",
+        "group_id": "number",
+        "request_status": "string",
+        "user_id": "number",
+        "updated": "timestamp"
+    }
+}
+Error Responses:
+- 403: Not authorized to update request
+- 404: Request not found
+
+
+6. GROUP MOVIE ENDPOINTS
+======================
+
+Add Movie to Group
+----------------
+Description: Add a movie to a group's watchlist
+POST /groups/:groupId/movies
+Parameters:
+- groupId: Group identifier (number)
+Auth: Required
+Request:
+{
+    "title": "string",          // Movie title
+    "finnkino_event": "string"  // Optional Finnkino event ID
+}
+Response: 201 Created
+{
+    "message": "Movie added successfully",
+    "movie": {
+        "group_id": "number",
+        "movie_id": "number",
+        "title": "string"
+    }
+}
+Error Responses:
+- 403: Not authorized to add movies
+- 404: Group not found
+- 409: Movie already in group
+
+List Group Movies
+---------------
+Description: Get all movies in a group's watchlist
+GET /groups/:groupId/movies
+Parameters:
+- groupId: Group identifier (number)
+Auth: Required
+Response: 200 OK
+{
+    "movies": [
+        {
+            "group_id": "number",
+            "movie_id": "number",
+            "title": "string",
+            "finnkino_event": "string",
+            "added_date": "timestamp"
+        }
+    ]
+}
+Error Responses:
+- 403: Not authorized to view group movies
+- 404: Group not found

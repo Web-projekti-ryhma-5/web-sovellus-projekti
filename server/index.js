@@ -1,10 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+
 import {userRouter} from './routes/userRouter.js';
 import reviewRouter from './routes/reviewRouter.js';
 import groupRouter from './routes/groupRouter.js';
 import favouriteMoviesRouter from './routes/favouriteMoviesRouter.js';
+// use assert keyword instead if with keyword does not work
+import swaggerDocument from './swagger.json' with { type: "json" };
 
 dotenv.config();
 
@@ -17,6 +21,11 @@ app.use(root + '/auth', userRouter);
 app.use(root + '/favourites', favouriteMoviesRouter);
 app.use(root + '/groups', groupRouter);
 app.use(root + '/reviews', reviewRouter);
+
+// Swagger docs
+app.use(root + '/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   console.log(err)
